@@ -1,0 +1,24 @@
+  \begin{tikzpicture}[
+    node distance=2.5cm, % Minimum distance between two nodes. Change if necessary.
+    every state/.style={ % Sets the properties for each state
+    semithick,
+    fill=gray!10},
+    initial text={}, % No label on start arrow
+    double distance=2pt, % Adjust appearance of accept states
+    every edge/.style={ % Sets the properties for each transition
+    draw,
+    ->,>=stealth', % Makes edges directed with bold arrowheads
+    auto,
+    semithick}
+  ]
+    % Plus
+    \node[state, initial] (s0) {s0};
+    \node (dots) [right=of s0, xshift=-1cm] {$\cdots$};
+    \node[state, right of=dots] (sn1) {$s_{n-1}$};
+    \node[state, accepting, right of=sn1] (sn) {$s_n$};
+  
+    \draw (s0) edge node {$\sigma$} (dots);
+    \draw (dots) edge node {$\sigma$} (sn1);
+    \draw (sn1) edge node {$σ$} (sn);
+    \draw (sn) edge[bend left, above] node {$ε$} (s0);
+  \end{tikzpicture}

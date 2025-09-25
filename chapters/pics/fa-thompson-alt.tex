@@ -1,0 +1,61 @@
+% \documentclass{article}
+% \usepackage{tikz}
+% \usetikzlibrary{automata} % Import library for drawing automata
+% \usetikzlibrary{positioning} % ...positioning nodes
+% \usetikzlibrary{arrows} % ...customizing arrows
+% \usetikzlibrary{shapes.misc}
+% \usetikzlibrary{arrows.meta,
+%                 automata,
+%                 decorations.markings,
+%                 decorations.pathreplacing}
+
+% \begin{document}
+
+\begin{tikzpicture}[node distance=1.5cm]
+  % Alt
+  \node[state, initial] (s00) {};
+  \node (s02) [right=of s00, xshift=-1cm] {$\cdots$};
+  \node[state, accepting, right of=s02] (s03) {};
+
+  \draw[->] (s00) edge node[above] {$\sigma_1$} (s02);
+  \draw[->] (s02) edge node[above] {$\sigma_n$} (s03);
+
+  \node[right of=s03,scale=3] (altopfa) {$|$};
+  \node[below of=altopfa,scale=1.5] (eqopfa) {$\Downarrow$};
+
+  \node[state, right of=altopfa, initial] (s10) {};
+  \node (s12) [right=of s10, xshift=-1cm] {$\cdots$};
+  \node[state, accepting, right of=s12] (s13) {};
+
+  \draw[->] (s10) edge node[above] {$\alpha_1$} (s12);
+  \draw[->] (s12) edge node[above] {$\alpha_m$} (s13);
+
+  \node[state, initial, below of=altopfa, yshift=-3cm, xshift=-3.1cm] (sres0) {};
+
+  \node[state, right of=sres0, yshift=1.5cm] (sres00) {};
+  % \node[state, right of=sres00] (sres01) {s01};
+  \node (dots02) [right of=sres00] {$\cdots$};
+  \node[state, right of=dots02] (sres03) {};
+
+  \node[state, right of=sres0, yshift=-1.5cm] (sres10) {};
+  % \node[state, right of=sres10] (sres11) {s11};
+  \node (dots12) [right of=sres10] {$\cdots$};
+  \node[state, right of=dots12] (sres13) {};
+
+  \node[state, accepting, right of=sres03, yshift=-1.5cm] (sres1) {};
+
+  % \draw (sres00) edge node {$\sigma$} (sres01);
+  \draw[->] (sres00) edge node[above] {$\sigma_1$} (dots02);
+  \draw[->] (dots02) edge node[above] {$\sigma_n$} (sres03);
+
+  % \draw (sres10) edge node {$\sigma$} (sres11);
+  \draw[->] (sres10) edge node[above] {$\alpha_1$} (dots12);
+  \draw[->] (dots12) edge node[above] {$\alpha_m$} (sres13);
+
+  \draw[->] (sres0) edge node[above] {$\varepsilon$} (sres00);
+  \draw[->] (sres0) edge node[above] {$\varepsilon$} (sres10);
+  \draw[->] (sres03) edge node[above] {$\varepsilon$} (sres1);
+  \draw[->] (sres13) edge node[above] {$\varepsilon$} (sres1);
+\end{tikzpicture}
+
+% \end{document}

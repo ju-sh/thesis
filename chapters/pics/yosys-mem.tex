@@ -1,0 +1,11 @@
+\begin{tikzpicture}
+\begin{axis}[
+  title=RAM utilization,
+  xlabel={Regex size},
+  ylabel={RAM},
+  legend pos=north west,
+  legend entries={RAM}
+]
+  \addplot table {chapters/data/yosys/mem-yosys.dat};
+\end{axis}
+\end{tikzpicture}

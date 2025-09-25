@@ -1,0 +1,94 @@
+% \documentclass{article}
+% \usepackage{forest}
+% \usepackage{fontspec}
+% \usepackage{subcaption}
+
+% \newcommand\blackcircle{{\fontspec{Symbola}●}}
+
+% \newcommand\utimes{\mathbin{\ooalign{$\cup$\cr%
+%    \hfil\raise0.42ex\hbox{$\scriptscriptstyle\times$}\hfil\cr}}}
+% \newcommand\bigutimes{\mathop{\ooalign{$\bigcup$\cr%
+%    \hfil\raise0.36ex\hbox{$\scriptscriptstyle\boldsymbol{\times}$}\hfil\cr}}}
+
+% \begin{document}
+
+% \begin{figure}
+
+\begin{subfigure}{0.2\textwidth}
+  \centering
+% balanced
+\begin{forest}
+[$\uplus$
+  [$\uplus$ [\blackcircle] [\blackcircle]]
+  [$\uplus$ [\blackcircle] [\blackcircle]]
+]
+\end{forest}
+\caption{(1+1)+(1+1)}
+\label{fig:sort-shape-balanced}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.2\textwidth}
+  \centering
+% right-left
+\begin{forest}
+[$\uplus$
+  [\blackcircle]
+  [$\uplus$
+    [$\uplus$ [\blackcircle] [\blackcircle]]
+    [\blackcircle]
+  ]
+]
+\end{forest}
+\caption{1+((1+1)+1)}
+\label{fig:sort-shape-right-left}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.2\textwidth}
+  \centering
+% left-right
+\begin{forest}
+[$\uplus$
+  [$\uplus$ [\blackcircle]
+     [$\uplus$ [\blackcircle] [\blackcircle]]
+  ]
+  [\blackcircle]
+]
+\end{forest}
+\caption{(1+(1+1))+1}
+\label{fig:sort-shape-left-right}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.2\textwidth}
+  \centering
+% left leaning
+\begin{forest}
+[$\uplus$
+  [$\uplus$ 
+    [$\uplus$ [\blackcircle] [\blackcircle]]
+    [\blackcircle]
+  ]
+  [\blackcircle]
+]
+\end{forest}
+\caption{((1+1)+1)+1}
+\label{fig:sort-shape-left-lean}
+\end{subfigure}
+% \hfill
+% \begin{subfigure}{0.2\textwidth}
+%   \centering
+% % right leaning
+% \begin{forest}
+% [$\uplus$ [\blackcircle]
+%   [$\uplus$ [\blackcircle]
+%     [$\uplus$ [\blackcircle] [\blackcircle]]
+%   ]
+% ]
+% \end{forest}
+% \caption{1+(1+(1+1))}
+% \label{fig:sort-shape-right-lean}
+% \end{subfigure}
+% \caption{Different shapes of a finite set with 4 elements}
+% \label{fig:sort-shape}
+% \end{figure}
+
+% \end{document}

@@ -1,0 +1,67 @@
+\chapter{Conclusion}\label{ch:bye}
+In this thesis, we described a workflow by which hardware
+implementations of \gls{rgx} matchers can be produced from within the
+Coq theorem prover.
+%
+% The \gls{rgx} that we consider are more powerful than classic
+% \gls{rgx} since we use Boolean tests on input as atoms.
+%
+% The core component of our flow is implemented within the Coq proof
+% assistant, which allows for the possibility of reasoning about the
+% generated designs in the future.
+% Though the \gls{rgx} is provided within Coq, users need not have
+% significant theorem proving experience as we provide an \gls{eDSL}
+% with friendly syntax to write the \gls{rgx}.
+%
+Our workflow is built entirely with open source tools and further
+configuration is possible if required.
+The end result produced by this workflow is an \gls{FPGA} loadable
+bitstream.
+
+
+We implemented the core part of our flow within Coq to leave open the
+possibility of proving its correctness.
+% It is possible to prove the correctness of the \glspl{NFA} that our
+% workflow generates within Coq.
+This correctness proof is planned to be taken up in a follow-up work.
+%
+Once such a proof is completed, we additionally need to trust the
+correctness of the following sub-systems involved in our workflow to
+consider the hardware that we generate correct:
+the Coq kernel, the Coq extraction procedure, the Clash compiler and
+the \gls{EDA} tools.
+These subsystems collectively form the \gls{TCB} of our formalization.
+It is desirable to minimize the size of the \gls{TCB}.
+%
+Since our entire development relies on the type safety of Coq, we
+cannot remove the Coq kernel from the \gls{TCB}.
+% since we use Coq's
+% type checker for proofs.
+It is possible to reduce the size of our \gls{TCB} by generating
+Verilog code directly from Coq, instead of relying on a full-blown,
+sophisticated compiler like Clash.
+%
+In principle, it is possible to remove the \gls{EDA} tools from the
+\gls{TCB} if we build an entire verified \gls{EDA} toolchain similar
+to how the CompCert compiler~\cite{leroy2009formal} was built.
+However, building such a verified toolchain is a highly challenging
+task as these tools are very complex.
+% removing the \gls{EDA} tools from \gls{TCB} is difficult since
+% they are very complex and formally verifying their correctness is a
+% highly non-trivial task.
+
+
+Our experiments show that our method results in matchers that are
+usable for practical applications.
+% We believe that the matchers produced by our flow is suitable fo
+The matchers have reasonably low resource utilization, which we
+believe is sufficient for use in real-life scenarios like monitoring
+liveliness properties.
+%
+We were able to achieve this despite not considering possible avenues
+of optimization on the side of the input \gls{rgx} and the
+corresponding \gls{NFA}.
+The present work can be extended in the future to expand the
+generalized form of \glspl{rgx} that we consider to the whole of
+\gls{SERE} and eventually to \gls{PSL} itself.
+

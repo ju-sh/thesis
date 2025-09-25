@@ -1,0 +1,14 @@
+\begin{tikzpicture}
+\begin{axis}[
+  % width=6cm,
+  % title=Time taken: Verilog generation \& synthesis,
+  xlabel={Regex size},
+  ylabel={Seconds},
+  % width=0.5\textwidth,
+  legend pos=north west,
+  legend entries={Verilog generation, Synthesis}
+]
+  \addplot table {chapters/data/time-data/time-hdl.dat};
+  \addplot table {chapters/data/time-data/time-synth.dat};
+\end{axis}
+\end{tikzpicture}

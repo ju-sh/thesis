@@ -1,0 +1,24 @@
+\begin{tikzpicture}[
+  block/.style = {
+    draw,
+    shape=rectangle,
+    minimum width=1.2cm,
+    minimum height=1.2cm,
+    fill=gray!20,
+    align=center
+  },
+]
+  \node (coq) [block] {Coq};
+  \node (nfadata) [right of=coq, xshift=2.75cm] {\texttt{Nfadata.hs}};
+  \node (mon) [below of=nfadata] {\texttt{Mon.hs}};
+  \node (cabal) [shape=ellipse, draw, right of=nfadata, xshift=1.75cm] {cabal};
+  \node (proj) [draw, rectangle, right of=cabal, xshift=2.0cm] {Project};
+  \node (hdl) [block] [right of=proj, xshift=2.0cm] {Verilog};
+
+  \draw[->] (coq) -- (nfadata) node[above,midway] {Extract};
+  \draw[->] (nfadata) -- (cabal)  {};
+  \draw[->] (mon) -| (cabal)  {};
+  \draw[->] (cabal) -- (proj) node[above,midway] {Build};
+  \draw[->] (proj) -- (hdl) node[above,midway] {Clash};
+\end{tikzpicture}
+

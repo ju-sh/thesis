@@ -1,0 +1,165 @@
+\begin{figure}
+\begin{subfigure}{0.5\textwidth}
+% \begin{verbatim}
+% Fixpoint empty (s: sort): s ↝ bool :=
+%   match s with
+%   | 0 => Zero
+%   | 1 => One false
+%   | (s1 ✛ s2)%sort =>
+%       (empty s1) ✛ (empty s2)
+%   end%vec.
+% \end{verbatim}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{Fixpoint} \PY{n}{empty} \PY{o}{(}\PY{n}{s}\PY{o}{:} \PY{n}{sort}\PY{o}{)}\PY{o}{:} \PY{n}{s} \PY{n+nb+bp}{↝} \PY{n}{bool} \PY{o}{:=}
+  \PY{k}{match} \PY{n}{s} \PY{k}{with}
+  \PY{o}{|} \PY{l+m+mi}{0} \PY{o}{=\PYZgt{}} \PY{n}{Zero}
+  \PY{o}{|} \PY{l+m+mi}{1} \PY{o}{=\PYZgt{}} \PY{n}{One} \PY{n+nb+bp}{false}
+  \PY{o}{|} \PY{o}{(}\PY{n}{s1} \PY{n+nb+bp}{✛} \PY{n}{s2}\PY{o}{)}\PY{o}{\PYZpc{}}\PY{n}{sort} \PY{o}{=\PYZgt{}}
+      \PY{o}{(}\PY{n}{empty} \PY{n}{s1}\PY{o}{)} \PY{n+nb+bp}{✛} \PY{o}{(}\PY{n}{empty} \PY{n}{s2}\PY{o}{)}
+  \PY{k}{end}\PY{o}{\PYZpc{}}\PY{n}{vec}\PY{o}{.}
+\end{Verbatim}
+  \caption{Empty set}
+  \label{code:empty}
+  \vspace{1cm}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.5\textwidth}
+% \begin{verbatim}
+% Fixpoint singleton {s: sort}
+%   : ⟦s⟧%sort -> s ↝ bool :=
+%   match s with
+%   | 0 => fun _ => Zero
+%   | 1 => fun _ => One true
+%   | (s1 ✛ s2)%sort => fun x =>
+%     match x with
+%     | inl x' => (singleton x') ✛ (empty s2)
+%     | inr x' => (empty s1) ✛ (singleton x')
+%     end%vec
+%   end.
+% \end{verbatim}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{Fixpoint} \PY{n}{singleton} \PY{o}{\PYZob{}}\PY{n}{s}\PY{o}{:} \PY{n}{sort}\PY{o}{\PYZcb{}}
+  \PY{o}{:} \PY{n+nb+bp}{⟦}\PY{n}{s}\PY{n+nb+bp}{⟧}\PY{o}{\PYZpc{}}\PY{n}{sort} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{s} \PY{n+nb+bp}{↝} \PY{n}{bool} \PY{o}{:=}
+  \PY{k}{match} \PY{n}{s} \PY{k}{with}
+  \PY{o}{|} \PY{l+m+mi}{0} \PY{o}{=\PYZgt{}} \PY{k}{fun} \PY{o}{\PYZus{}} \PY{o}{=\PYZgt{}} \PY{n}{Zero}
+  \PY{o}{|} \PY{l+m+mi}{1} \PY{o}{=\PYZgt{}} \PY{k}{fun} \PY{o}{\PYZus{}} \PY{o}{=\PYZgt{}} \PY{n}{One} \PY{n+nb+bp}{true}
+  \PY{o}{|} \PY{o}{(}\PY{n}{s1} \PY{n+nb+bp}{✛} \PY{n}{s2}\PY{o}{)}\PY{o}{\PYZpc{}}\PY{n}{sort} \PY{o}{=\PYZgt{}} \PY{k}{fun} \PY{n}{x} \PY{o}{=\PYZgt{}}
+    \PY{k}{match} \PY{n}{x} \PY{k}{with}
+    \PY{o}{|} \PY{n}{inl} \PY{n}{x\PYZsq{}} \PY{o}{=\PYZgt{}} \PY{o}{(}\PY{n}{singleton} \PY{n}{x\PYZsq{}}\PY{o}{)} \PY{n+nb+bp}{✛} \PY{o}{(}\PY{n}{empty} \PY{n}{s2}\PY{o}{)}
+    \PY{o}{|} \PY{n}{inr} \PY{n}{x\PYZsq{}} \PY{o}{=\PYZgt{}} \PY{o}{(}\PY{n}{empty} \PY{n}{s1}\PY{o}{)} \PY{n+nb+bp}{✛} \PY{o}{(}\PY{n}{singleton} \PY{n}{x\PYZsq{}}\PY{o}{)}
+    \PY{k}{end}\PY{o}{\PYZpc{}}\PY{n}{vec}
+  \PY{k}{end}\PY{o}{.}
+\end{Verbatim}
+  \caption{Singleton set}
+  \label{code:singleton}
+\end{subfigure}
+
+\begin{subfigure}{0.5\textwidth}
+% \begin{verbatim}
+% Fixpoint zipWith {A B C: Type} {s: sort}
+%   (f: A -> B -> C)
+%   (fa: s ↝ A) (fb: s ↝ B): s ↝ C :=
+% zipWith f Zero Zero := Zero;
+% zipWith f (One a) (One b) := One (f a b);
+% zipWith f (Add fa1 fa2) (Add fb1 fb2) :=
+%   let ff1 := zipWith f fa1 fb1 in
+%   let ff2 := zipWith f fa2 fb2 in
+%   Add ff1 ff2.
+% \end{verbatim}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{Fixpoint} \PY{n}{zipWith} \PY{o}{\PYZob{}}\PY{n}{A} \PY{n}{B} \PY{n}{C}\PY{o}{:} \PY{k+kt}{Type}\PY{o}{\PYZcb{}} \PY{o}{\PYZob{}}\PY{n}{s}\PY{o}{:} \PY{n}{sort}\PY{o}{\PYZcb{}}
+  \PY{o}{(}\PY{n}{f}\PY{o}{:} \PY{n}{A} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{B} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{C}\PY{o}{)}
+  \PY{o}{(}\PY{n}{fa}\PY{o}{:} \PY{n}{s} \PY{n+nb+bp}{↝} \PY{n}{A}\PY{o}{)} \PY{o}{(}\PY{n}{fb}\PY{o}{:} \PY{n}{s} \PY{n+nb+bp}{↝} \PY{n}{B}\PY{o}{)}\PY{o}{:} \PY{n}{s} \PY{n+nb+bp}{↝} \PY{n}{C} \PY{o}{:=}
+\PY{n}{zipWith} \PY{n}{f} \PY{n}{Zero} \PY{n}{Zero} \PY{o}{:=} \PY{n}{Zero}\PY{o}{;}
+\PY{n}{zipWith} \PY{n}{f} \PY{o}{(}\PY{n}{One} \PY{n}{a}\PY{o}{)} \PY{o}{(}\PY{n}{One} \PY{n}{b}\PY{o}{)} \PY{o}{:=} \PY{n}{One} \PY{o}{(}\PY{n}{f} \PY{n}{a} \PY{n}{b}\PY{o}{)}\PY{o}{;}
+\PY{n}{zipWith} \PY{n}{f} \PY{o}{(}\PY{n}{Add} \PY{n}{fa1} \PY{n}{fa2}\PY{o}{)} \PY{o}{(}\PY{n}{Add} \PY{n}{fb1} \PY{n}{fb2}\PY{o}{)} \PY{o}{:=}
+  \PY{k}{let} \PY{n}{ff1} \PY{o}{:=} \PY{n}{zipWith} \PY{n}{f} \PY{n}{fa1} \PY{n}{fb1} \PY{k}{in}
+  \PY{k}{let} \PY{n}{ff2} \PY{o}{:=} \PY{n}{zipWith} \PY{n}{f} \PY{n}{fa2} \PY{n}{fb2} \PY{k}{in}
+  \PY{n}{Add} \PY{n}{ff1} \PY{n}{ff2}\PY{o}{.}
+\end{Verbatim}
+  \caption{Helper function}
+  \label{code:zipwith}
+  \vspace{1cm}
+\end{subfigure}
+\hfill
+\begin{subfigure}{0.3\textwidth}
+% \begin{verbatim}
+% Definition union a b :=
+%   zipWith orb a b.
+
+% Definition intersection a b :=
+%   zipWith andb a b.
+
+% Definition any a :=
+%   fold orb false a.
+% \end{verbatim}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{Definition} \PY{n}{union} \PY{n}{a} \PY{n}{b} \PY{o}{:=}
+  \PY{n}{zipWith} \PY{n}{orb} \PY{n}{a} \PY{n}{b}\PY{o}{.}
+
+\PY{k+kn}{Definition} \PY{n}{intersection} \PY{n}{a} \PY{n}{b} \PY{o}{:=}
+  \PY{n}{zipWith} \PY{n}{andb} \PY{n}{a} \PY{n}{b}\PY{o}{.}
+
+\PY{k+kn}{Definition} \PY{n}{any} \PY{n}{a} \PY{o}{:=}
+  \PY{k}{fold} \PY{n}{orb} \PY{n+nb+bp}{false} \PY{n}{a}\PY{o}{.}
+\end{Verbatim}
+  \caption{Union and intersection}
+  \label{code:union-intersect}
+\end{subfigure}
+%
+\begin{subfigure}{0.5\textwidth}
+% \begin{verbatim}
+% Fixpoint fold {s: sort} {A B: Type}
+%   (farg: B -> A -> A)
+%   (acc: A) (x: s ↝ B) : A :=
+% fold farg acc x with x := {
+%   | Zero => acc
+%   | One b => farg b acc
+%   | f1 ✛ f2 =>
+%       let acc' := fold farg acc f1 in
+%       fold farg acc' f2
+% }.
+% \end{verbatim}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{Fixpoint} \PY{k}{fold} \PY{o}{\PYZob{}}\PY{n}{s}\PY{o}{:} \PY{n}{sort}\PY{o}{\PYZcb{}} \PY{o}{\PYZob{}}\PY{n}{A} \PY{n}{B}\PY{o}{:} \PY{k+kt}{Type}\PY{o}{\PYZcb{}}
+  \PY{o}{(}\PY{n}{farg}\PY{o}{:} \PY{n}{B} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{A} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{A}\PY{o}{)}
+  \PY{o}{(}\PY{n}{acc}\PY{o}{:} \PY{n}{A}\PY{o}{)} \PY{o}{(}\PY{n}{x}\PY{o}{:} \PY{n}{s} \PY{n+nb+bp}{↝} \PY{n}{B}\PY{o}{)} \PY{o}{:} \PY{n}{A} \PY{o}{:=}
+\PY{k}{fold} \PY{n}{farg} \PY{n}{acc} \PY{n}{x} \PY{k}{with} \PY{n}{x} \PY{o}{:=} \PY{o}{\PYZob{}}
+  \PY{o}{|} \PY{n}{Zero} \PY{o}{=\PYZgt{}} \PY{n}{acc}
+  \PY{o}{|} \PY{n}{One} \PY{n}{b} \PY{o}{=\PYZgt{}} \PY{n}{farg} \PY{n}{b} \PY{n}{acc}
+  \PY{o}{|} \PY{n}{f1} \PY{n+nb+bp}{✛} \PY{n}{f2} \PY{o}{=\PYZgt{}}
+      \PY{k}{let} \PY{n}{acc\PYZsq{}} \PY{o}{:=} \PY{k}{fold} \PY{n}{farg} \PY{n}{acc} \PY{n}{f1} \PY{k}{in}
+      \PY{k}{fold} \PY{n}{farg} \PY{n}{acc\PYZsq{}} \PY{n}{f2}
+\PY{o}{\PYZcb{}}\PY{o}{.}
+\end{Verbatim}
+  \caption{Fold operation}
+  \label{code:fold}
+\end{subfigure}
+%
+\begin{subfigure}{0.5\textwidth}
+% \begin{verbatim}
+% Definition bigUnion {s1 s2: sort}
+%   (m: s1 ↝ bool) (f: s1 ↝ s2 ↝ bool)
+%   : s2 ↝ bool :=
+%   let H := zipWith
+%     (fun b fs2b =>
+%        if b then fs2b else empty _)
+%      m f in
+%   fold union (empty _) H.
+% \end{verbatim}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{Definition} \PY{n}{bigUnion} \PY{o}{\PYZob{}}\PY{n}{s1} \PY{n}{s2}\PY{o}{:} \PY{n}{sort}\PY{o}{\PYZcb{}}
+  \PY{o}{(}\PY{n}{m}\PY{o}{:} \PY{n}{s1} \PY{n+nb+bp}{↝} \PY{n}{bool}\PY{o}{)} \PY{o}{(}\PY{n}{f}\PY{o}{:} \PY{n}{s1} \PY{n+nb+bp}{↝} \PY{n}{s2} \PY{n+nb+bp}{↝} \PY{n}{bool}\PY{o}{)}
+  \PY{o}{:} \PY{n}{s2} \PY{n+nb+bp}{↝} \PY{n}{bool} \PY{o}{:=}
+  \PY{k}{let} \PY{n}{H} \PY{o}{:=} \PY{n}{zipWith}
+    \PY{o}{(}\PY{k}{fun} \PY{n}{b} \PY{n}{fs2b} \PY{o}{=\PYZgt{}}
+       \PY{k}{if} \PY{n}{b} \PY{k}{then} \PY{n}{fs2b} \PY{k}{else} \PY{n}{empty} \PY{o}{\PYZus{}}\PY{o}{)}
+     \PY{n}{m} \PY{n}{f} \PY{k}{in}
+  \PY{k}{fold} \PY{n}{union} \PY{o}{(}\PY{n}{empty} \PY{o}{\PYZus{}}\PY{o}{)} \PY{n}{H}\PY{o}{.}
+\end{Verbatim}
+  \caption{'Big union'}
+  \label{code:bigUnion}
+\end{subfigure}
+  \caption{Set operations in terms of \code{func}}
+  \label{code:vec-ops}
+\end{figure}

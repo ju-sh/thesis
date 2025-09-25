@@ -1,0 +1,39 @@
+\begin{tikzpicture}[node distance=1.5cm]
+  % Cat
+  \node[state, initial] (s00) {};
+  \node (s02) [right=of s00, xshift=-1cm] {$\cdots$};
+  \node[state, accepting, right of=s02] (s03) {};
+
+  \draw[->] (s00) edge node[above] {$\sigma_1$} (s02);
+  \draw[->] (s02) edge node[above] {$\sigma_n$} (s03);
+
+
+  \node[right of=s03,scale=3] (catopfa) {$;$};
+  \node[below of=catopfa,scale=1.5] (eqopfa) {$\Downarrow$};
+
+  \node[state, right of=catopfa, initial] (s10) {};
+  \node (s12) [right=of s10, xshift=-1cm] {$\cdots$};
+  \node[state, accepting, right of=s12] (s13) {};
+
+  \draw[->] (s10) edge node[above] {$\alpha_1$} (s12);
+  \draw[->] (s12) edge node[above] {$\alpha_m$} (s13);
+
+  % Cat
+  \node[state, initial, below of=s00, xshift=0.3cm, yshift=-1.8cm] (sres00) {};
+  \node (sres02) [right=of sres00, xshift=-1cm] {$\cdots$};
+  \node[state, right of=sres02] (sres03) {};
+
+  \node[state, right of=sres03, xshift=1cm] (sres10) {};
+  \node (sres12) [right=of sres10, xshift=-1cm] {$\cdots$};
+  \node[state, accepting, right of=sres12] (sres13) {};
+
+
+  \draw[->] (sres00) edge node[above] {$\sigma_1$} (sres02);
+  \draw[->] (sres02) edge node[above] {$\sigma_n$} (sres03);
+
+  \draw[->] (sres10) edge node[above] {$\alpha_1$} (sres12);
+  \draw[->] (sres12) edge node[above] {$\alpha_m$} (sres13);
+
+  \draw[->] (sres03) edge[bend left, above] node[above] (mid) {$\varepsilon$} (sres10);
+
+\end{tikzpicture}

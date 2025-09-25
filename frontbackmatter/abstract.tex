@@ -1,0 +1,100 @@
+%*******************************************************
+% Abstract
+%*******************************************************
+%\renewcommand{\abstractname}{Abstract}
+\pdfbookmark[1]{Abstract}{Abstract}
+% \addcontentsline{toc}{chapter}{\tocEntry{Abstract}}
+\begingroup
+\let\clearpage\relax
+\let\cleardoublepage\relax
+\let\cleardoublepage\relax
+%%%%**********************************************************************************
+%%% Note: Do not edit above this line
+%%%%**********************************************************************************
+
+\chapter*{Abstract}
+% Safety-critical systems cannot be allowed to go wrong.
+% Hence, some means of attaining a level of guarantee about the
+% correctness of their working is highly desirable.
+% Formal verification is useful for proving systems correct which,
+% unlike testing, can actually prove absence of errors with respect to
+% correctness specification.
+% There are cases where system's internal data cannot be used for
+% reasoning about its correctness and only its observable behaviour can
+% be reasoned about.
+% \gls{RV} is a dynamic form of formal verification that can
+% be used to ensure system correctness while it is working.
+% It involves having a monitor constantly check the system for
+% deviations from correct behaviour. 
+% %
+% Since \gls{RV} entrusts monitor to perform the verification,
+% correctness of monitors themselves is important. 
+% Correctness specifications of such monitors need to be written in a formal
+% language.
+% \gls{PSL} is a formal language commonly used to write hardware correctness
+% specifications.
+% Properties in this language can be written using a generalized form of
+% regular expressions called \glspl{SERE}.
+% This means that a checker for \gls{PSL} properties needs a regular
+% expression matcher that is more expressive than classic regex.
+% %
+% In this thesis, we produce a workflow by which a subset of
+% \glspl{SERE} can be converted to hardware implementations of their
+% matchers from within the Coq proof assistant.
+% %
+% The resultant matchers can readily be loaded onto FPGAs and can operate at
+% reasonable speed.
+
+Regular expression matching is used in a wide variety of
+applications ranging from compilers to computational biology.
+We are interested in this task because of their usefulness in
+\emph{runtime verification}, which is used to ensure the correctness
+of reactive systems.
+%
+Runtime verification involves the design and use of a \emph{monitor}
+which observes the behaviour of a running system and flags deviations
+from a formal specification describing its intended behaviour.
+%
+The effectiveness of runtime verification depends on the correctness
+of the monitor.
+Hence, the confidence in overall system correctness can be enhanced if
+the monitor is proven to be correct.
+
+% Specifications used in runtime verification are usually written in a
+% formal language based on a temporal logic.
+% We are interested in regular expression matching because of its use in
+% one such language named \emph{Property Specification Language} (PSL).
+% This language is commonly used to write correctness specifications in
+% hardware verification.
+% %
+% Properties in PSL can be written using a generalized form of regular
+% expressions.
+% Hence, a monitor for specifications written in PSL needs a regular
+% expression matcher.
+
+In this work, we provide a mechanism that accepts a generalized form of
+regular expressions within the theorem prover Coq and produces the
+hardware implementation for a corresponding matcher.
+The resultant matchers are reasonably small and can be used in
+practical applications like monitoring liveness properties.
+Our experimental results show that our designs have reasonably low
+resource utilization with the growth in their size limited to linear
+bounds.
+Hence, designs are useful for practical use cases.
+
+\bigskip
+%\vspace*{\fill}
+\vfill
+\begingroup
+\noindent
+{\textbf{Keywords:} Formal methods, Runtime verification, Hardware}\\
+\smallskip
+\noindent
+% {\textbf{AMS Subject Classification:} Give Class here . Remove if irrelevant}\\
+% \smallskip
+\noindent
+{\textbf{ACM Subject Classification:} Logic and verification}
+\endgroup
+\endgroup
+
+\vfill

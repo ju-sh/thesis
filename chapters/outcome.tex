@@ -1,0 +1,646 @@
+\chapter{Results} \label{ch:outcome}
+In this chapter, we describe the experiments that we performed to test
+our workflow and the resulting observations.
+We found that our flow produces designs that are of practical use.
+Since the \gls{rgx} we consider is more expressive than the classic
+regex, we can use specifications similar to the \glspl{SERE} of
+\gls{PSL}.
+% Though the workflow itself uses only open source software to allow for
+% customizations in the future, we also tried proprietary synthesis
+% tool. The open source tool chain was less resource intensive.
+
+\section{Experiment set-up}
+In order to gauge the results of our workflow, we performed
+experiments by varying the size of the input \gls{rgx}.
+These experiments were performed on an AMD Ryzen-7 400 series
+processor with 32GB RAM equipped with an SSD for secondary
+% processor with 32GB \gls{RAM} equipped with a \gls{SSD} for secondary
+storage.
+We used the workflow to produce matchers for \glspl{rgx} of different
+sizes.
+The input type of these \glspl{rgx} was \code{re (Char -> Bool)}
+(Table~\ref{tab:sample-taa}).
+The size of these \glspl{rgx} ranged from 1 to 61.
+The available amount of RAM was insufficient for \glspl{rgx}
+%% of
+% The available amount of \gls{RAM} was insufficient for \glspl{rgx} of
+%% input type \code{Char}
+with size greater than 61.
+We also tried the flow with a proprietary synthesis tool (Xilinx
+Vivado) on the same computer, but it was more memory intensive when
+compared to open source tools and could handle only \gls{rgx} size
+up to 41.
+The statistics that we report in this chapter are made using the
+\gls{FOSS} tool-chain described in Section~\ref{sec:eda}.
+Since a formal correctness proof has not yet been built, we used
+property-based testing to ensure the correctness of the generated
+Clash designs.
+Verilog designs generated from these designs were further
+simulated via Verilator testbenches~\cite{snyder2010verilator}.
+
+\begin{table}
+\centering
+\begin{tabular}{lc}
+  \toprule
+  \gls{rgx}            & Size \\
+  \midrule
+  \code{"a"}           & 1    \\
+  \code{"a"; "b"}      & 2    \\
+  \code{"a"; "b"; "c"} & 3    \\
+  \bottomrule
+\end{tabular}
+\caption{Sample test regexes used}  
+\label{tab:sample-taa}  
+\end{table}
+
+% We primarily used the open source tools yosys and nextpnr to perform
+% \gls{EDA}.
+% In addition to our workflow using open source tools, we also tried the
+% same experiments with the free version of the proprietary Xilinx
+% Vivado tool for synthesis.
+% We found that the open source toolchain required less computer
+% resources than Vivado.
+
+\section{Size and sparsity of transition matrix}
+The transition information of the \gls{rgx} matcher automata is a 3D
+Boolean matrix $\delta$.
+The rows of this transition matrix are associated with the entries in
+the function table $ft$.
+Any given row of $\delta$ is a 2D sub-matrix containing the
+transition information to be used when a particular subset of tests in the input
+regular expression is activated.
+These sub-matrices are square matrices with size $2|s|$ where $|s|$ is the
+number of \gls{NFA}-states.
+%
+This is because 
+each $Atom$ in the input \gls{rgx} $r$ leads to a pair of states in the
+NFA model of the matcher, in addition to an entry in the function
+table $ft$.
+% 4t³ = t * 2t * 2t
+Therefore, $\delta$ as a whole would have $O(|r|^3)$ elements.
+%% As a result, size of $\delta$ grows exponentially with respect to the
+%% size of the input \gls{rgx} (Fig.~\ref{graph:loc-design}).
+Fig.~\ref{graph:loc-design} shows the growth in the size of the
+matcher Clash design with respect to increase in input \gls{rgx} size.
+% Resultant transition matrix would have $\mathcal{O}(n^3)$ elements,
+
+Most states of the \gls{NFA}
+%% The structure of the \gls{NFA} 
+that we build using Thompson's \gls{NFA} construction algorithm do not
+have any transition between them.
+Hence, $\delta$ ends up being a sparse matrix.
+%% \gls{NFA} construction algorithm is a sparse graph,
+%% which makes $\delta$ a sparse matrix.
+This is the reason why $\delta$ is huge for larger \glspl{rgx} even
+though the information it contains can be stored using less space.
+For example, a \gls{rgx} of size 60 led to almost 160K lines of
+Haskell code.
+Most of this is the transition matrix.
+Fig.~\ref{graph:loc-design} shows the increase in the size of the
+extracted Haskell code and the resulting Verilog, as the size of the
+input \gls{rgx} increases.
+We chose not to use a sparse matrix for our implementation as proofs
+involving sparse matrices are considerably more complex.
+
+\begin{figure}
+  \begin{center}
+    \input{chapters/pics/loc-verilog.tex}
+    \caption{Lines of code in generated designs}
+    \label{graph:loc-design}
+  \end{center}
+\end{figure}
+
+We also study the time required for the overall flow to run.
+The total time taken to produce the matcher bitstream from the input
+regular expression appears to grow exponentially with respect to the
+size of the regular expression (Fig.~\ref{graph:time-taken}).
+%% Exponential growth in the size of the transition matrix $\delta$ with
+%% respect to \gls{rgx} size means that there is a similar growth in the
+%% time taken to produce the hardware matchers
+%% %
+%% The time taken by each phase of our flow, ranging from extraction to
+%% synthesis, grows exponentially with increase in size of input
+%% \gls{rgx}.
+Among the different phases of our workflow, the Haskell-to-Verilog
+conversion takes the longest amount of time, followed by the circuit
+synthesis process (Fig.~\ref{graph:time-hdl-synth}).
+The Haskell code that the Clash compiler accepts as input is written
+in terms of functions.
+These functions are processed until their applications can be reduced
+down into a form which can directly be mapped to constructs available
+in an \gls{HDL} like Verilog.
+Reduction of functions that accept the transition matrix $\delta$
+will take more time to process as $\delta$ gets larger.
+%% This is especially tru
+This is likely the reason for the longer time taken for the generation
+of Verilog descriptions.
+% TODO: Mention that clash doesn't preform any optimization
+%
+%
+The synthesis process is time consuming, as it involves optimizations
+which are resource intensive.
+%% The peak RAM utilization of the synthesis process is shown in
+%% Fig.~\ref{graph:yosys-ram}.
+%% %
+%% The largest \gls{rgx} that we could try without crashing the synthesis
+%% tool was of size 61 whose peak memory utilization was 28.83 GB
+%% during the synthesis process (Fig.~\ref{graph:yosys-ram}).
+%
+The time taken by the other phases of the workflow, such as the Coq extraction
+process and the Clash project builds, also grow exponentially with respect
+to the input \gls{rgx} size, but they take much lesser time than the
+Verilog generation and synthesis phases.
+% TODO: Time taken by nextpnr
+
+
+%% Exponential growth in the size of the transition matrix $\delta$ with
+%% respect to increase in \gls{rgx} size means that there is a similar
+%% growth in the time taken to generate the Verilog description and the
+%% circuit synthesis process itself (Fig.~\ref{graph:time-taken}).
+%% %% For a \gls{rgx} of size 61, the time taken for the overall flow was
+%% %% over three hours.
+%% %
+%% Among the 
+
+As in the case of time taken, the memory utilized by the synthesis
+tool also grows exponentially with respect to the size of the input
+\gls{rgx}.
+The largest \gls{rgx} we could try without crashing the synthesis tool
+was of size 61 whose maximum memory utilization was 28.83 GB during
+the synthesis process (Fig.~\ref{graph:yosys-ram}).
+
+\begin{figure}
+  \begin{center}
+    \input{chapters/pics/yosys-mem.tex}
+    \caption{Peak RAM utilization for synthesis}
+    \label{graph:yosys-ram}
+  \end{center}
+\end{figure}
+
+%% Construction and conversion to Clash-compatible Haskell of the
+%% transition matrix is quite fast, but compilation from Clash to Verilog
+%% can be quite slow.
+%% % This is because Clash implicitly performs rewrites for converting
+%% % Haskell to HDL
+%% This is because Clash does not try to minimize the sparseness of the
+%% matrix and tries to faithfully convert it to Verilog as it is.
+%% However, the synthesis tool is able to optimize the design so well that
+%% the resource utilization of the implemented design is very low.
+
+%% TODO: Put this in future work
+%% It is possible that using sparse matrices and associated operations
+%% can speed up the Clash to Verilog conversion.
+%% Clash does not have a sparse matrix representation and we would have
+%% to make our own computation-friendly definitions, which can be
+%% converted to vectors.
+%% We leave this as a possible path of future exploration.
+
+\begin{figure}
+\begin{subfigure}{1.0\linewidth}
+  \begin{center}
+    \input{chapters/pics/time-build-extr.tex}
+    \caption{Extraction and Cabal build}
+    \label{graph:time-build-extr}
+  \end{center}
+\end{subfigure}
+
+\begin{subfigure}{1.0\linewidth}
+  \begin{center}
+    \input{chapters/pics/time-hdl-synth.tex}
+    \caption{Verilog generation and synthesis}
+    \label{graph:time-hdl-synth}
+  \end{center}
+\end{subfigure}
+
+\begin{subfigure}{1.0\linewidth}
+  \begin{center}
+    % \input{chapters/pics/time-taken.tex}
+    \input{chapters/pics/time-stacked.tex}
+  \caption{Total time}
+  \label{graph:time-taken}
+  \end{center}
+\end{subfigure}
+  \caption{Time taken}
+  \label{graph:time}
+\end{figure}
+
+%% % TODO: Use this paragraph blocks
+%% The extraction process that converts Coq values to Haskell performs a
+%% one-to-one mapping from Coq values to Haskell values.
+%% Likewise, the Clash compiler simply converts the Haskell-like code to
+%% equivalent Verilog without attempting any optimizations of the kind
+%% performed by synthesis tools.
+%% Clash designs corresponding to matchers of larger \glspl{rgx} also
+%% cause the process of building the Clash project to take exponentially
+%% larger amount of time~(Fig. \ref{graph:time-build-extr}).
+%% %
+%% Due to the large size of the Clash design caused by the high degree
+%% of sparsity of the transition matrix, generation of Verilog code by
+%% the Clash compiler and the synthesis task performed by yosys to
+%% produce a netlist are the most time consuming phases of our
+%% flow~(Fig. \ref{graph:time-hdl-synth}),
+%% out of which the time taken for Verilog generation seems to grow
+%% faster than the time taken by the synthesis process.
+%% %
+%% The transition matrix consists of large vectors, which in many cases
+%% have only a single set value.
+%% This gives scope for optimizations during the synthesis phase that can
+%% considerably bring down the size of the final design.
+%% % Clash compiler simply tries to convert the Haskell-like code to
+%% % equivalent Verilog without attempting any optimizations of the kind
+%% % performed by synthesis tools.
+%% The synthesis tool accepts the Verilog code generated by the Clash
+%% compiler and performs optimizations that consume both time and
+%% computer memory.
+
+%% %% As in the case of time taken, memory utilized by the synthesis tool
+%% %% also grows exponentially with respect to the size of the input
+%% %% \gls{rgx}.
+%% %% The largest \gls{rgx} that we could try without crashing the synthesis
+%% %% tool was of size 61 whose maximum memory utilization was 28.83 GB
+%% %% during the synthesis process (Fig.~\ref{graph:yosys-ram}).
+
+\section{Hardware resource utilization}
+%% We used a Gowin LittleBee \gls{FPGA} of the LittleBee family
+%% developed by Gowin Semiconductor GW1N-9C (GW1NR-LV9QN88PC6/I5) made by Gowin
+%% Semiconductor for trying out our designs.
+
+% Device: GW1NR-LV9QN88PC6/I5
+% Family: GW1N-9C
+
+We used a Sipeed Tang Nano 9K board (Table~\ref{tab:sipeed-resources})
+for test our designs.
+This board contains a LittleBee \gls{FPGA} made by Gowin Semiconductor
+(device: GW1NR-LV9QN88PC6/I5, family: GW1N-9C).
+
+% We used a LittleBee \gls{FPGA} developed by Gowin Semiconductor for
+% trying out our designs (device: GW1NR-LV9QN88PC6/I5, family: GW1N-9C).
+%% Some of the resources offered by this \gls{FPGA} are s
+Among the resources available in this \gls{FPGA}, the only resources
+used by the designs generated by our workflow that varied with the
+input \gls{rgx} size were the \gls{LUT} count and the number of
+registers used.
+%% corresponding change in the number of slices utilized.
+%
+%% We used an \gls{FPGA} GW1N-9C (GW1NR-LV9QN88PC6/I5) made by Gowin
+%% Semiconductor for trying out our designs.
+%% Among the resources available in this \gls{FPGA}
+%% (Table~\ref{tab:fpga-resources}), the only resources used by the
+%% designs generated by our workflow that varied with input \gls{rgx}
+%% size were 5 and 6 input \glspl{LUT} made by combining the LUT4
+%% elements available in the \gls{FPGA}, which by extension also meant
+%% number of slices utilized.
+This makes sense as our designs are simple.
+Since the 
+\glspl{LUT} store transition information and the relation between the
+size of the transition matrix and the input \gls{rgx} size is linear,
+the number of \glspl{LUT} and slices utilized grows almost linearly
+with respect to the input \gls{rgx} size
+(Fig.~\ref{graph:utilization}).
+% As expected, the number of \glspl{LUT} and slices utilized grows almost linearly
+% with respect to input \gls{rgx} size, which makes sense as the
+% \glspl{LUT} store transition information and the relation between size
+% of the transition matrix and the input \gls{rgx} size is
+% linear~\ref{graph:utilization}.
+The occasional drops in the \gls{LUT} utilization graph are likely
+due to the synthesis tool being able to find better courses of
+optimizations in certain cases.
+%
+Although the transition matrix $\delta$ of the \glspl{NFA} can be
+quite large, its sparseness means that the information it holds can be
+represented using much lesser space in hardware.
+%
+The synthesis tool performs optimizations to produce designs whose
+resource utilization is very small even for large $\delta$ values.
+
+\begin{figure}
+  \begin{center}
+    \input{chapters/pics/utilization.tex}
+  \caption{Resource utilization}
+  \label{graph:utilization}
+  \end{center}
+\end{figure}
+
+
+% \begin{table}
+%   \begin{center}
+%   \begin{tabular}{ll}
+%     \toprule
+% Resource                     & Count \\
+%     \midrule
+% LUTs (LUT4)                  & 8640  \\
+% Registers / FFs              & 6480  \\
+% PLLs                         & 2     \\
+% Buttons                      & 2     \\
+% LEDs                         & 6     \\
+% % Crystal oscillator frequency & 27MHz \\
+%     \bottomrule
+%   \end{tabular}
+%   \end{center}
+% \caption{Resources available in a GW1NR-LV9QN88PC6/I5 \gls{FPGA}}
+% \label{tab:fpga-resources}
+% \end{table}
+
+\begin{table}
+  % \centering
+  \begin{minipage}{0.5\linewidth}
+  \begin{tabular}{ll}
+\toprule
+    Resource           & Count          \\
+\midrule
+    LUTs (LUT4)        & 8640           \\
+    Registers / FFs    & 6480           \\
+    PLLs               & 2              \\
+    Buttons            & 2              \\
+    LEDs               & 6              \\
+    Buttons            & 2              \\ 
+    Block SRAM         & 26             \\
+    18 x 18 multiplier & 20             \\
+\bottomrule
+\end{tabular}
+\end{minipage}
+\hfill
+  \begin{minipage}{0.5\linewidth}
+  \begin{tabular}{ll}
+\toprule
+    Resource           & Size (bits)    \\
+\midrule
+    Block SRAM         & 468K           \\
+    Shadow SRAM        & 17280          \\
+    SDRAM size         & 64M            \\
+    SPI flash          & 32M            \\
+    User flash         & 608K           \\
+\bottomrule
+  \end{tabular}
+  \begin{tabular}{ll}
+\toprule
+    Resource           & Type           \\
+\midrule
+    Display interface  & HDMI, SPI, RGB \\
+    Debugger           & JTAG, UART     \\
+    % IO               &                \\
+    % Connector        &                \\
+\bottomrule
+  \end{tabular}
+  \end{minipage}
+  \caption{Resources available in a Sipeed Tang Nano 9K board}
+  \label{tab:sipeed-resources}
+\end{table}
+
+
+The utilization of other \gls{FPGA} resources is constant regardless
+of the size of the input \gls{rgx}.
+%
+% 25 IOB
+All designs have a constant number of input and output signals.
+Each of them has 4 inputs (clock, enable, reset and input character)
+and a single Boolean result as output.
+Likewise, each design needs only one each of ground and $V_{cc}$ pins.
+No other \gls{FPGA} resources were used.
+
+
+
+%% \section{Trusted code base}
+% \section{Correctness}
+% Our formalization of \glspl{NFA} is made in a form that can be
+% extracted and converted to synthesizable hardware designs.
+% Building such extractable designs while also having ease of
+% correctness proofs is tricky to get right.
+% %
+% Ideally, we should find a sweet spot between extractability and ease
+% of proofs.
+% %
+% As mentioned earlier,
+% most of the existing formalizations of finite sets are optimized for
+% proofs rather than extractability.
+% %% like the \code{finset} type of mathcomp
+% %
+% For example, we were able to define and prove correctness of
+% \gls{rgx}-\gls{NFA} conversions using the \code{finset} type from
+% mathcomp but the \glspl{NFA} so constructed do not extract in a
+% convenient way.
+
+% On the other hand, types like \code{Vector.t}, while being
+% computation-friendly and extractable, are so notoriously
+% unwieldy that it is often difficult to define functions using them
+% \footnote{\url{https://github.com/coq/coq/pull/18032}}.
+% %
+% Since manipulating \code{Vector.t} values is well known to be difficult,
+% %\footnote{\url{https://github.com/coq/coq/pull/18032}},
+% we chose to define \glspl{NFA} using the \code{func} type.
+% But the \glspl{NFA} correctness proofs involving \code{func} turned
+% out to be difficult as well due to the latter's tree structure.
+% Due to this reason, we could not complete the correctness proof of the
+% Coq procedure converting \glspl{rgx} to \glspl{NFA}.
+
+
+% % While using \code{func} gave us the flexibility to build
+% % extractable \gls{NFA}, proofs involving them are still tricky.
+% % One reason for that is that is the tree structure of \code{func}.
+% % We were not able to complete the correctness proof of our \gls{NFA}
+% % generation procedure.
+
+% Despite the advantages offered by \code{func}, its flexibility
+% % while making disjoint union when compared to \code{Vector.t}
+% comes at a cost.
+% Values of type $s \vto T$ are structured as trees where each node is a
+% constructor. The shape of this tree is indicated by the \code{sort} value $s$,
+% where the elements will always be at a leaf position.
+% %% A given finite set can be represented in 
+% % A A given $s \vto T$ type can have several different possible values inhabiting
+% % it.
+% % Whereas a given \code{Vector.t} value would have 
+% This means that case analysis on a given \code{func} value would have
+% %% to deal with more than one vector structure unlike for \code{Vector.t}
+% to deal with more than one structure unlike for \code{Vector.t}
+% which can be split only in one way due to its linear structure.
+% A few possible structures for a vector \code{[a, b, c]} encoded as a
+% \code{func} value is shown in Fig.~\ref{fig:vec-tree}.
+% %% The strucuture of a \code{func} value can be 'flattened' to make it
+% %% linear.
+% %% Such a flattening is done to convert the \code{func} values in the
+% %% \gls{NFA} that we construct to corresponding \code{Vector.t} values.
+% %% This is done because the built-in \code{Vec} type of Clash has a
+% %% linear shape.
+% % A given value of type \code{Vector.t A n} can be  inhabited by a f 
+% %
+% There is only one way to decompose a \code{Vector.t A 3} value: into a
+% \code{A} and a \code{Vector.t A 2}.
+% But a corresponding $\mathbb{3} \vto A$ value, where $\mathbb{3}$ is a
+% \code{sort} value indicative of a finite type with cardinality 3, can
+% be decomposed into one of five different possibilities some of which
+% are illustrated in Fig.~\ref{fig:vec-tree}.
+% This creates considerable difficulty in building correctness proofs
+% for definitions made using \code{func}.
+
+% \begin{figure}
+%   %\centering
+%   \hfill%
+%   \begin{minipage}{0.7\textwidth}%
+%   \input{chapters/snippets/vector-type.tex}
+%   \end{minipage}%
+%   \hfill%
+%   \caption{Vector type from Coq standard library}
+%   \label{fig:vector-type}
+% \end{figure}
+
+% \begin{figure}
+% \begin{subfigure}{0.5\textwidth}
+%   \centering
+% \begin{forest}
+% [+ 
+%    [\{a\}]
+%    [+
+%      [\{b\}]
+%      [\{c\}]
+%    ]
+% ]
+% \end{forest}
+% \caption{$\{a\} \cup (\{b\} \cup \{c\})$}
+% \label{fig:vec-tree-1}
+% \end{subfigure}
+% %
+% \begin{subfigure}{0.5\textwidth}
+%   \centering
+% \begin{forest}
+% [+ 
+%    [+
+%      [\{a\}]
+%      [\{b\}]
+%    ]
+%    [\{c\}]
+% ]
+% \end{forest}
+% \caption{$(\{a\} \cup \{b\}) \cup \{c\}$}
+% \label{fig:vec-tree-2}
+% \end{subfigure}
+
+% \begin{subfigure}{0.5\textwidth}
+%   \centering
+% \begin{forest}
+% [+ 
+%    [+
+%      [\{a\}]
+%      [$\emptyset$]
+%    ]
+%    [+
+%      [\{b\}]
+%      [\{c\}]
+%    ]
+% ]
+% \end{forest}
+% \caption{$(\{a\} \cup \emptyset) \cup (\{b\} \cup \{c\})$}
+% \label{fig:vec-tree-3}
+% \end{subfigure}
+% %
+% \begin{subfigure}{0.5\textwidth}
+%   \centering
+% \begin{forest}
+% [+ 
+%    [+
+%      [\{a\}]
+%      [+ [$\emptyset$] [$\emptyset$]]
+%    ]
+%    [+ [\{b\}] [\{c\}]]
+% ]
+% \end{forest}
+% \caption{$(\{a\} \cup (\emptyset \cup \emptyset)) \cup (\{b\} \cup \{c\})$}
+% \label{fig:vec-tree-4}
+% \end{subfigure}
+% \caption{Different 'shapes' of vector \code{[a,b,c]} encoded as a \code{func} value}
+% \label{fig:vec-tree}
+% \end{figure}
+
+% %%%%
+% \section{Correctness}
+% \gls{TCB} of a formalization is the part of its implementation that is
+% assumed to be correct since no formal correctness proof is offered
+% for it.
+% As the correctness proof of our \gls{rgx} to \gls{NFA} conversion
+% procedure is not yet complete, the entirety of the codebase involved
+% in our workflow is currently part of the \gls{TCB}.
+% Once a formal correctness proof of the \gls{NFA} generation procedure
+% is complete, the \gls{TCB} can be reduced to the Coq type checker, the
+% extraction procedure, the Clash compiler and the \gls{EDA} toolchain.
+% Metaprogramming within Coq could be helpful to verify the extraction
+% procedure and reduce the \gls{TCB} even further.
+
+
+\section{Properties expressible by regex}
+In \gls{RV}, the monitor checks whether a finite prefix of the output
+trace is in violation of the correctness specification.
+This prefix is the part of the \gls{SuV}'s output trace that is
+currently visible to the monitor.
+Since this prefix is of a finite length, it can be matched by means of a
+\gls{rgx}.
+%
+% In \gls{RV}, the currently available part of the output trace is being
+% checked against a correctness specification.
+% This is a finite prefix of the trace that can be matched by a regex.
+%
+Therefore, a certain class of properties useful for \gls{RV} can be
+expressed with our \gls{rgx}.
+% TODO: Classification of RV props. Bad prefix, good prefix, ugly prefix  
+\emph{Liveness properties}, which state that a condition eventually
+occurs in the future, can be satisfied by examining the finite prefix
+of the trace.
+Hence, such properties can be specified with a \gls{rgx}.
+In contrast to liveness, \emph{safety properties} are those properties
+that specify that a condition always holds true.
+Specifications expressing conformance to safety properties cannot be
+written as a \gls{rgx} since no finite trace prefix can provide
+sufficient information to conclude that the property is satisfied.
+% is for that unless the property has been violated.
+Violation of safety properties can be expressed as a liveness
+properties instead.
+
+% TODO: Make the example a safety
+Let us consider a simple example. Suppose that there is a door equipped
+with an intrusion detection system. When this door is opened while the
+system is armed, an alarm should be triggered. There is no need for
+alarm if the system is not armed.
+This situation can be specified as a regex:
+$(armed \land \lnot open)*;\ (armed \land open);\ alert$.
+Here $armed$, $open$ and $alert$ are atoms.
+An \gls{NFA} corresponding to this \gls{rgx} constructed using our
+workflow is shown in Fig~\ref{fa:eg-property}.
+%
+% TODO:
+% This scenario is a simplified form of a safety-critical system wher
+
+% \begin{tabular}{rl}
+%   \colorbox{teal!10}{
+%     \parbox{0.10\textwidth}{
+%       $a*;\ b;\ c$ \\
+%       ${} \ {}\ {}\ \downarrow$ \\
+%       $(a+|\varepsilon);\ b;\ c$ \\
+%     }
+%   } &
+%   % \colorbox{blue!20}{
+%   \colorbox{teal!10}{
+%     \parbox{0.23\textwidth}{
+%       \begin{tabular}{ccl}
+%         $armed \land \lnot open$ & $\mapsto$ & $a$ \\
+%         $armed \land open$       & $\mapsto$ & $b$ \\
+%         $alert$                  & $\mapsto$ & $c$ \\
+%       \end{tabular}
+%     }
+%   }
+% \end{tabular}
+
+% Eg nfa picture
+\begin{figure}
+  \begin{center}
+    \input{chapters/pics/armed-eg.tex}
+  \end{center}
+  \caption{$(armed \land \lnot open)*;\ (armed \land open);\ alert$}
+  \label{fa:eg-property}
+\end{figure}
+
+
+% TODO: Did property based testing
+
+% Even when coq part is verified, remaining isn't. Could be fixed by
+% verifying extraction. MetaCoq??
+
+

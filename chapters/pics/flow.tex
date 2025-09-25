@@ -1,0 +1,90 @@
+% \tikzstyle{proc} = [rectangle, minimum width=5mm, minimum height=5mm, text centered, draw=black]
+
+% % \begin{minipage}{\0.6textwidth}
+% \begin{figure}
+% \begin{subfigure}[b]{0.6\textwidth}
+% \centering
+% \begin{tikzpicture}
+%   \node (ppty) {property};
+%   \node (compiler) [proc,right of=ppty,xshift=12mm,align=left] {Verified\\ compiler};
+%   \node (prog) [right of=compiler,xshift=9mm] {prog};
+%   \node (tbl) [below of=prog,yshift=-12mm,align=center] {Transition\\table};
+%   \node (vm) [proc] at (compiler |- tbl) {VM};
+%   \node (inp) [align=left] at (ppty |- vm) {Input\\string};
+%   \node (verd) [below of=vm,yshift=-5mm] {Verdict};
+%   \draw[->] (vm) -- (verd);
+%   \draw[->] (inp) -- (vm);
+%   \draw[->] (tbl) -- (vm);
+%   \draw[->] (prog) -- (tbl);
+%   \draw[->] (compiler) -- (prog);
+%   \draw[->] (ppty) -- (compiler);
+% \end{tikzpicture}%
+% \caption{Property to VM input compilation}
+% \label{fig:flow1}
+% \end{subfigure}%
+% %
+% \begin{subfigure}[b]{0.4\textwidth}
+% \centering
+% \begin{tikzpicture}
+%   \node (vm) {VM};
+%   \node (haskell) [below of=vm,yshift=-5mm] {Haskell};
+%   \node (vhdl) [below of=haskell,yshift=-5mm] {VHDL};
+%   \draw[->] (vm) -- node[right, fill=white]{extraction} (haskell) ;
+%   \draw[->] (haskell) -- node[right, fill=white]{clash} (vhdl) ;
+% \end{tikzpicture}
+% \caption{Conversion to HDL}
+% \label{fig:flow2}
+% \end{subfigure}
+% \caption{Monitor generation}
+% \label{fig:monitor-gen}
+% \end{figure}
+
+% % \tikzstyle{proc} = [rectangle, minimum width=5mm, minimum height=5mm, text centered, draw=black]
+% % \begin{tikzpicture}
+% %   \node (spec) {Spec};
+% %   \node (compiler) [proc,right of=spec,xshift=20mm,align=center] {Spec\\ compiler};
+% %   \node (nfa) [below of=spec,yshift=-20mm] {NFA};
+% %   \node (proof) [right of=compiler,xshift=20mm,yshift=2mm] {Proof};
+% %   \node (proofchecker) [proc,right of=proof,xshift=20mm,align=center,minimum height=30mm] {Proof\\ checker};
+% %   \node (correctness) [right of=proofchecker,xshift=20mm] {Correctness};
+% %   %
+% %   \node (tf) [right of=nfa,xshift=30mm] {Transitions};
+% %   \node (haskell) [right of=tf,xshift=30mm] {Haskell};
+% %   \node (vhdl) [right of=haskell,xshift=25mm] {VHDL};
+% %   %
+% %   \draw[->] (spec) -- (compiler);
+% %   \draw[->] (nfa) -- (tf) node[above,midway] (thompson) {Thompson};
+% %   \draw[->] (tf) -- (haskell) node[above,midway] {Extraction};
+% %   \draw[->] (haskell) -- (vhdl) node[above,midway] {Clash};
+% %   \draw[->] (compiler.south) -- ++(0,-5mm) -| (nfa.north);
+% %   \draw[->] (compiler.15) -- (proof.west);
+% %   \draw[->] (proof.east) -- (proofchecker.west);
+% %   %
+% %   \draw[->] (compiler.south)++(0,-5mm) -- ++(15mm,0) |- (proofchecker.220);
+% %   \draw[->] (proofchecker.east) -- (correctness.west);
+% %   %
+% %   % \node at (compiler.south)++(0,-5mm) [circle,fill,inner sep=1.5pt]{};
+% %   % \node at (compiler.south)++(0,-5mm) [circle,fill,inner sep=1.5pt]{};
+% %   %
+% %   %\draw[->] (compiler.220) -- ++(0,-5mm) -| (nfa.north);
+% %   % \draw[->] (compiler.320) -- ++(0,-5mm) -| (nfa.north);
+% %   %
+% %   % \node (tf) [proc,right of=nfa,xshift=9mm] {Label $\mapsto$ nat};
+% %   % \node (tbl) [below of=tf,yshift=-5mm,align=center] {Transition\\table};
+% %   % \node (vm) [proc,left of=tbl,xshift=-5mm] {VM};
+% %   % \node (inp) [left of=vm,xshift=-5mm,align=left] {Input\\string};
+% %   % \node (verd) [below of=vm,yshift=-5mm] {Verdict};
+% %   % \draw[->] (vm) -- (verd);
+% %   % \draw[->] (inp) -- (vm);
+% %   % \draw[->] (tbl) -- (vm);
+% %   % \draw[->] (tf) -- (tbl);
+% %   % \draw[->] (nfa) -- (tf) node[above,midway] {Thompson};
+% %   % \draw[->] (spec) -- (compiler);
+% %   %\draw[->] (compiler.south) |-  (nfa);
+% %   % \draw[->] (compiler.south) -|  (nfa.north);
+% %   %\draw[->] (compiler.south) |- (thompson.north)+(0mm,8mm) -| (nfa.north);
+% %   %\draw[->] (compiler.south) |- ($ (thompson.north) + (0mm,5mm) $) -| (nfa.north);
+% %   % \draw[->] (compiler.south) |- (nfa.north)+(10,10mm) -| (nfa.north);
+% %   %\draw[->] (compiler.south) |- (compiler.south)+(0,-10mm) -| (nfa);
+% %   % \draw[->] (compiler.east)+(0,-5mm) -- (nfa);
+% % \end{tikzpicture}

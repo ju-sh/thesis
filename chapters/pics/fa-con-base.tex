@@ -1,0 +1,21 @@
+\begin{subfigure}{0.5\linewidth}
+  \centering
+  \begin{tikzpicture}[node distance=1.5cm]
+    % Eps
+    \node[state, initial, accepting] (s0) {};
+  \end{tikzpicture}%
+  \caption{eps}
+  \label{fa:con-eps}
+\end{subfigure}
+% \vfill%
+\begin{subfigure}{0.5\linewidth}
+  \centering
+  \begin{tikzpicture}[node distance=1.5cm]
+    % Atom
+    \node[state, initial] (s00) {};
+    \node[state, accepting] (s01)  [right=of s00] {};
+    \draw (s00) edge node[above] {$\sigma$} (s01);
+  \end{tikzpicture}%
+  \caption{atom}
+  \label{fa:con-atom}
+\end{subfigure}%

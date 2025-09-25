@@ -1,0 +1,64 @@
+% \documentclass{article}
+% \usepackage{tikz}
+% \usetikzlibrary{automata} % Import library for drawing automata
+% \usetikzlibrary{positioning} % ...positioning nodes
+% \usetikzlibrary{arrows} % ...customizing arrows
+% \usetikzlibrary{shapes.misc}
+
+% \usetikzlibrary{decorations.pathreplacing}
+
+% \begin{document}
+
+\begin{tikzpicture}[
+  block/.style = {
+    draw,
+    shape=rectangle,
+    minimum width=1.2cm,
+    minimum height=1.2cm,
+    fill=gray!20,
+    align=center
+  },
+]
+  \node (tregex) {regex};
+  \node (coq)[
+    below of=tregex,
+    block,
+    yshift=-10mm
+  ] {Coq};
+  \node (nfa)[
+    below of=coq,
+    block,
+    yshift=-15mm
+  ] {NFA};
+  \node (haskell)[
+    right of=nfa,
+    block,
+    xshift=20mm
+  ] {Haskell};
+  \node (verilog)[
+    right of=haskell,
+    block,
+    xshift=20mm,
+    align=center
+  ] {Verilog};
+  \node (bitstream)[
+    above of=verilog,
+    block,
+    yshift=15mm,
+    align=center
+  ] {Bitstream};
+  \node (fpga)[
+    above of=bitstream,
+    yshift=10mm,
+    align=center
+  ] {FPGA};
+
+  \draw[->] (tregex) -- (coq) node[left,midway] {eDSL};
+  \draw[->] (coq) -- (nfa) node[left,midway] {Compile};
+  \draw[->] (nfa) -- (haskell) node[above,midway] {Extract};
+  \draw[->] (haskell) -- (verilog) node[above,midway] {Clash};
+  \draw[->] (verilog) -- (bitstream) node[right,midway] {EDA};
+  \draw[->] (bitstream) -- (fpga) node[right,midway] {Load};;
+\end{tikzpicture}
+
+% \end{document}

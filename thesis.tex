@@ -1,0 +1,92 @@
+% **************************************************************************************************************
+% A Classic Thesis Style
+% An Homage to The Elements of Typographic Style
+%
+% Copyright (C) 2018 André Miede and Ivo Pletikosić
+%
+%
+% License:
+% This program is free software; you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation; either version 2 of the License, or
+% (at your option) any later version.
+%
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with this program; see the file COPYING.  If not, write to
+% the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+% Boston, MA 02111-1307, USA.
+%
+% PLEASE SEE ALSO THE AUTHORS' NOTE REGARDING THIS LICENSE
+% IN THE DOCUMENTATION (ClassicThesis.pdf --> Chapter 1 / Chapter01.tex)
+% ******************************************************************************
+%%Customized for IIT Palakkad by Jasine Babu and Sravan Kumar Perumalla 
+%% (jasine@iitpkd.ac.in, sravanperumalla@gmail.com) 
+%% For reporting issues, IIT Palakkad users may contact jasine@iitpkd.ac.in  
+%%******************************************************************************
+\documentclass[ twoside,openright,titlepage,numbers=noenddot,%1headlines,
+                headinclude,footinclude,cleardoublepage=empty,abstract=on,
+                BCOR=5mm,paper=a4,fontsize=11pt,
+                %eulermath
+                %palatino=false
+                ]{scrreprt}   
+
+\input{classicthesis-config}
+
+\addbibresource{bibliography.bib} %
+
+\begin{document}
+\frenchspacing
+\raggedbottom
+\pagenumbering{roman}
+\pagestyle{plain}
+%********************************************************************
+% Frontmatter
+%*******************************************************
+\include{frontbackmatter/titlepage}
+\include{frontbackmatter/titleback}
+\changecleardoublepage % Do not edit. Temporarily changing cleardoublepage
+\cleardoublepage\include{frontbackmatter/certificate}
+\cleardoublepage\include{frontbackmatter/declaration}
+\cleardoublepage\include{frontbackmatter/dedication}
+\cleardoublepage\include{frontbackmatter/abstract}
+%\cleardoublepage\include{frontbackmatter/publications}
+\cleardoublepage\include{frontbackmatter/acknowledgments}
+\cleardoublepage\include{frontbackmatter/contents}
+\cleardoublepage\include{frontbackmatter/symbols}
+\cleardoublepage\include{frontbackmatter/abbreviations}
+\resetcleardoublepage %Do not edit. Changing cleardoublepage back to original
+
+
+%********************************************************************
+% Mainmatter
+%*******************************************************
+\cleardoublepage
+\pagestyle{scrheadings}
+\pagenumbering{arabic}
+%\setcounter{page}{90}
+% use \cleardoublepage here to avoid problems with pdfbookmark
+\cleardoublepage
+%**********************************************************************************
+% Note: Do not edit above this line
+% Configuration changes may be done in the file classicthesis-config.tex
+% Contents of the other files may be edited as instructed in the respective files
+%**********************************************************************************
+
+
+\include{chapters/intro.tex}
+\include{chapters/prelims.tex}
+\include{chapters/finitev3.tex}
+%\include{chapters/finitev2.tex}
+\include{chapters/clashv2.tex}
+\include{chapters/outcome.tex}
+%\include{chapters/bye.tex}
+\include{chapters/byev2.tex}
+
+\cleardoublepage\include{frontbackmatter/bibliography}
+
+\end{document}

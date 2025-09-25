@@ -1,0 +1,212 @@
+% https://github.com/nickgian/thesis/blob/master/thesis.tex
+
+\usepackage{mathpartir}
+\usepackage{fontspec}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{forest}
+\usepackage{xcolor}
+\usepackage{listingsutf8}
+% \usepackage{lmodern}
+\usepackage{pgfplots}
+%\pgfplotsset{compat=1.18}
+\usepackage{alectryon}
+\usepackage{pygments}
+\usepackage{fancyvrb}
+\usepackage{turnstile}
+%\usepackage{minted}
+%% \usepackage{refcheck}
+
+\newcommand\bbool{{\fontspec{Symbola} 𝔹}}
+\newcommand\cmodels{{\fontspec{Symbola} ⊨}}
+\newcommand\blackcircle{{\fontspec{Symbola} ●}}
+\newcommand\alecmodels{{\fontspec{DejaVu Sans} ⊨}}
+\newcommand\aleczero{{\fontspec{DejaVu Sans} 𝟘}}
+\newcommand\alecone{{\fontspec{DejaVu Sans} 𝟙}}
+\newcommand{\modelsere}{\sttstile{}{}} % three horizontal stripe models symbol
+\newcommand{\modelbool}{\ddtstile{}{}} % two horizontal stripe models symbol
+\newcommand{\modelppty}{\sdtstile{}{}} % three horizontal stripe models symbol
+
+% Disjoint union
+\newcommand\utimes{\mathbin{\ooalign{$\cup$\cr%
+   \hfil\raise0.42ex\hbox{$\scriptscriptstyle\times$}\hfil\cr}}}
+\newcommand\bigutimes{\mathop{\ooalign{$\bigcup$\cr%
+   \hfil\raise0.36ex\hbox{$\scriptscriptstyle\boldsymbol{\times}$}\hfil\cr}}}
+
+
+
+% For tblr env
+\usepackage{tabularray}
+\UseTblrLibrary{booktabs}
+
+%\usepackage{subfig}
+%\usepackage[acronym]{glossaries}
+
+\usepackage{tikz}
+\usetikzlibrary{arrows} % ...customizing arrows
+\usetikzlibrary{arrows.meta}
+\usetikzlibrary{automata} % Import library for drawing automata
+\usetikzlibrary{calc}
+\usetikzlibrary{decorations.markings}
+\usetikzlibrary{decorations.pathreplacing}
+\usetikzlibrary{positioning} % ...positioning nodes
+\usetikzlibrary{shapes}
+\usetikzlibrary{shapes.misc}
+%
+\usetikzlibrary{external}
+\tikzexternalize
+\usepackage{circuitikz}
+
+\lstset{%
+    basicstyle=\ttfamily\footnotesize,
+    numbers=none,
+    escapechar=\#,
+}
+
+% \lstset{%
+%     numbers=none,
+%     numberstyle=\tiny\color[rgb]{0.5,0.5,0.5},
+%     basicstyle=\ttfamily\footnotesize,
+%     basewidth=0.59em,
+%     keywordstyle=[3]{},
+%     commentstyle=\itshape\footnotesize,
+%     tabsize=4,
+%     frame=single,
+%     frameround=tttt,
+%     showstringspaces=false,
+%     breaklines=true,
+%     %breaklines=false,
+%     captionpos=b,
+%     aboveskip=\bigskipamount,
+%     belowskip=\bigskipamount,
+%     escapechar=#,
+%     keywordstyle=\color[rgb]{0,0,1},
+%     commentstyle=\color[rgb]{0.133,0.545,0.133},
+%     stringstyle=\color[rgb]{0.627,0.126,0.941},
+%     extendedchars=true,
+% }
+
+
+% \usepackage{lstcoq}
+% \usepackage{lsthsk}
+% \usepackage{lstverilog}
+% 
+% % Style options:
+% % numberstyle,basicstyle,identifierstyle,commentstyle,stringstyle
+% % keywordstyle=[1]{},keywordstyle=[2]{},directivestyle
+% % \small\tiny\footnotesize\itshape\ttfamily\bf
+% \lstdefinestyle{coq_style}{%
+%   language=Coq, float=htb!
+% }
+% \lstnewenvironment{Coq}[2]{%
+%   \nopagebreak
+%   \lstset{style=coq_style,label={#1},caption={#2}}
+% }{}
+% 
+% \newcommand{\includecode}[4][Coq]{%
+%   \nopagebreak
+%   \lstinputlisting[label={#2},caption={#3},style={#1_style}]{#4}
+% }
+% \newcommand{\lstheader}[2]{%
+%   \begin{lstlisting}[label={#1},caption={#2},style=coq_style]
+% }
+
+
+% \def\lstlanguagefiles{defManSSR.tex}
+% \lstset{language=SSR}
+
+% \newcommand\doubleplus{+ \kern-1.3ex + \kern0.8ex}
+
+% Twiggly arrow
+\newcommand{\vto}{\mathrel{\leadsto}}
+\newcommand{\cvto}{{\fontspec{DejaVu Sans} ↝}}
+
+\newcommand\hsk[1]{\texttt{#1}}
+\newcommand\cq[1]{\texttt{#1}}
+\newcommand\code[1]{\texttt{#1}}
+
+% Celsius
+\usepackage{siunitx}
+
+% \theoremstyle{plain}
+\theoremstyle{definition}
+\newtheorem*{objective}{Objective}
+
+\input{acronyms.tex}
+
+% % \setlength{\abovecaptionskip}{2pt}
+% \setlength{\belowcaptionskip}{3em}
+% % \addtolength{\subfigcapskip}{-1pt}
+
+%% \usepackage[pagewise]{lineno}
+%% \linenumbers
+
+\newcommand*{\rplus}{\textit{r+}}
+\newcommand*{\bool}{{\fontspec{DejaVu Sans} 𝔹}}
+\newcommand*{\sem}{{\fontspec{DejaVu Sans} ⊨}}
+\newcommand*{\eqdouble}{==}
+% \newcommand*{\eqeq}{{\fontspec{Noto Sans Math Regular} ⩵}}
+
+\tikzset{
+%     node distance=2.5cm, % Minimum distance between two nodes. Change if necessary.
+    every state/.style={ % Sets the properties for each state
+    semithick,
+    fill=gray!10},
+    initial text={}, % No label on start arrow
+%     double distance=2pt, % Adjust appearance of accept states
+%     every edge/.style={ % Sets the properties for each transition
+%     draw,
+%     ->,>=stealth', % Makes edges directed with bold arrowheads
+%     auto,
+%     semithick}%
+}
+
+
+%%% New TikZ shape
+
+% taken from manual
+\makeatletter
+\pgfdeclareshape{document}{
+\inheritsavedanchors[from=rectangle] % this is nearly a rectangle
+\inheritanchorborder[from=rectangle]
+\inheritanchor[from=rectangle]{center}
+\inheritanchor[from=rectangle]{north}
+\inheritanchor[from=rectangle]{south}
+\inheritanchor[from=rectangle]{west}
+\inheritanchor[from=rectangle]{east}
+% ... and possibly more
+\backgroundpath{% this is new
+% store lower right in xa/ya and upper right in xb/yb
+\southwest \pgf@xa=\pgf@x \pgf@ya=\pgf@y
+\northeast \pgf@xb=\pgf@x \pgf@yb=\pgf@y
+% compute corner of ‘‘flipped page’’
+\pgf@xc=\pgf@xb \advance\pgf@xc by-10pt % this should be a parameter
+\pgf@yc=\pgf@yb \advance\pgf@yc by-10pt
+% construct main path
+\pgfpathmoveto{\pgfpoint{\pgf@xa}{\pgf@ya}}
+\pgfpathlineto{\pgfpoint{\pgf@xa}{\pgf@yb}}
+\pgfpathlineto{\pgfpoint{\pgf@xc}{\pgf@yb}}
+\pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@yc}}
+\pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@ya}}
+\pgfpathclose
+% add little corner
+\pgfpathmoveto{\pgfpoint{\pgf@xc}{\pgf@yb}}
+\pgfpathlineto{\pgfpoint{\pgf@xc}{\pgf@yc}}
+\pgfpathlineto{\pgfpoint{\pgf@xb}{\pgf@yc}}
+\pgfpathlineto{\pgfpoint{\pgf@xc}{\pgf@yc}}
+}
+}
+\makeatother
+
+\tikzstyle{doc}=[%
+  draw,
+  thick,
+  align=center,
+  color=black,
+  shape=document,
+  % minimum width=20mm,
+  % minimum height=28.2mm,
+  shape=document,
+  inner sep=2ex,
+]

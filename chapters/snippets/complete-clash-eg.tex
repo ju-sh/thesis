@@ -1,0 +1,110 @@
+{\scriptsize
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{c+cm}{\PYZob{}\PYZhy{}}\PY{c+cm}{\PYZsh{} LANGUAGE PartialTypeSignatures \PYZsh{}}\PY{c+cm}{\PYZhy{}\PYZcb{}}
+\PY{c+cm}{\PYZob{}\PYZhy{}}\PY{c+cm}{\PYZsh{} LANGUAGE ScopedTypeVariables \PYZsh{}}\PY{c+cm}{\PYZhy{}\PYZcb{}}
+\PY{c+cm}{\PYZob{}\PYZhy{}}\PY{c+cm}{\PYZsh{} LANGUAGE NoImplicitPrelude \PYZsh{}}\PY{c+cm}{\PYZhy{}\PYZcb{}}
+\PY{c+cm}{\PYZob{}\PYZhy{}}\PY{c+cm}{\PYZsh{} OPTIONS\PYZus{}GHC }\PY{c+cm}{\PYZhy{}}\PY{c+cm}{fno}\PY{c+cm}{\PYZhy{}}\PY{c+cm}{warn}\PY{c+cm}{\PYZhy{}}\PY{c+cm}{partial}\PY{c+cm}{\PYZhy{}}\PY{c+cm}{type}\PY{c+cm}{\PYZhy{}}\PY{c+cm}{signatures \PYZsh{}}\PY{c+cm}{\PYZhy{}\PYZcb{}}
+
+\PY{k+kr}{module}\PY{+w}{ }\PY{n+nn}{Mon}\PY{+w}{ }\PY{k+kr}{where}
+
+\PY{k+kr}{import}\PY{+w}{ }\PY{n+nn}{Clash.Prelude}
+\PY{k+kr}{import}\PY{+w}{ }\PY{n+nn}{Nfadata}
+
+\PY{c+cm}{\PYZob{}\PYZhy{}}\PY{c+cm}{\PYZsh{} ANN topEntity}
+\PY{c+cm}{  (Synthesize}
+\PY{c+cm}{    }\PY{c+cm}{\PYZob{}}\PY{c+cm}{ t\PYZus{}name   = \PYZdq{}topEntity\PYZdq{}}
+\PY{c+cm}{    , t\PYZus{}inputs = [ PortName \PYZdq{}clk\PYZdq{}}
+\PY{c+cm}{                 , PortName \PYZdq{}rst\PYZdq{}}
+\PY{c+cm}{                 , PortName \PYZdq{}en\PYZdq{}}
+\PY{c+cm}{                 , PortName \PYZdq{}inp\PYZdq{} ]}
+\PY{c+cm}{    , t\PYZus{}output = PortName \PYZdq{}res\PYZdq{}}
+\PY{c+cm}{    }\PY{c+cm}{\PYZcb{}}\PY{c+cm}{) \PYZsh{}}\PY{c+cm}{\PYZhy{}\PYZcb{}}
+
+\PY{n+nf}{dotProduct}
+\PY{+w}{  }\PY{o+ow}{::}\PY{+w}{ }\PY{k+kt}{Vec}\PY{+w}{ }\PY{n}{n}\PY{+w}{ }\PY{k+kt}{Bool}
+\PY{+w}{  }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{k+kt}{Vec}\PY{+w}{ }\PY{n}{n}\PY{+w}{ }\PY{k+kt}{Bool}
+\PY{+w}{  }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{k+kt}{Bool}
+\PY{n+nf}{dotProduct}\PY{+w}{ }\PY{n}{v1}\PY{+w}{ }\PY{n}{v2}\PY{+w}{ }\PY{o+ow}{=}
+\PY{+w}{  }\PY{n}{foldr}\PY{+w}{ }\PY{p}{(}\PY{o}{||}\PY{p}{)}\PY{+w}{ }\PY{k+kt}{False}\PY{+w}{ }\PY{p}{(}\PY{n}{zipWith}\PY{+w}{ }\PY{p}{(}\PY{o}{\PYZam{}\PYZam{}}\PY{p}{)}\PY{+w}{ }\PY{n}{v1}\PY{+w}{ }\PY{n}{v2}\PY{p}{)}
+
+\PY{n+nf}{mulMxVec}
+\PY{+w}{  }\PY{o+ow}{::}\PY{+w}{ }\PY{k+kt}{Vec}\PY{+w}{ }\PY{n}{n}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{Vec}\PY{+w}{ }\PY{n}{m}\PY{+w}{ }\PY{k+kt}{Bool}\PY{p}{)}
+\PY{+w}{  }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{k+kt}{Vec}\PY{+w}{ }\PY{n}{m}\PY{+w}{ }\PY{k+kt}{Bool}
+\PY{+w}{  }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{k+kt}{Vec}\PY{+w}{ }\PY{n}{n}\PY{+w}{ }\PY{k+kt}{Bool}
+\PY{n+nf}{mulMxVec}\PY{+w}{ }\PY{n}{mx}\PY{+w}{ }\PY{n}{v}\PY{+w}{ }\PY{o+ow}{=}
+\PY{+w}{  }\PY{n}{map}\PY{+w}{ }\PY{p}{(}\PY{n}{dotProduct}\PY{+w}{ }\PY{n}{v}\PY{p}{)}\PY{+w}{ }\PY{n}{mx}
+
+\PY{n+nf}{plus}
+\PY{+w}{  }\PY{o+ow}{::}\PY{+w}{ }\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{k+kt}{Bool}\PY{p}{)}
+\PY{+w}{  }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{k+kt}{Bool}\PY{p}{)}
+\PY{+w}{  }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{k+kt}{Bool}\PY{p}{)}
+\PY{n+nf}{plus}\PY{+w}{ }\PY{n}{a}\PY{+w}{ }\PY{n}{b}\PY{+w}{ }\PY{o+ow}{=}\PY{+w}{ }\PY{n}{zipWith}\PY{+w}{ }\PY{p}{(}\PY{n}{zipWith}\PY{+w}{ }\PY{p}{(}\PY{o}{||}\PY{p}{)}\PY{p}{)}\PY{+w}{ }\PY{n}{a}\PY{+w}{ }\PY{n}{b}
+
+
+\PY{n+nf}{mult}
+\PY{+w}{  }\PY{o+ow}{::}\PY{+w}{ }\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{k+kt}{Bool}\PY{p}{)}\PY{p}{)}
+\PY{+w}{  }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{k+kt}{Bool}
+\PY{+w}{  }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{k+kt}{Bool}\PY{p}{)}
+\PY{n+nf}{mult}\PY{+w}{ }\PY{n}{a}\PY{+w}{ }\PY{n}{b}\PY{+w}{ }\PY{o+ow}{=}
+\PY{+w}{  }\PY{k+kr}{let}\PY{+w}{ }\PY{n}{tmp}\PY{+w}{ }\PY{o+ow}{=}\PY{+w}{ }\PY{n}{zipWith}\PY{+w}{ }\PY{p}{(}\PY{n+nf}{\PYZbs{}}\PY{n}{tf}\PY{+w}{ }\PY{n}{b}\PY{+w}{ }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{k+kr}{if}\PY{+w}{ }\PY{n}{b}\PY{+w}{ }\PY{k+kr}{then}\PY{+w}{ }\PY{n}{tf}\PY{+w}{ }\PY{k+kr}{else}\PY{+w}{ }\PY{n}{bottom2D}\PY{+w}{ }\PY{n}{tf}\PY{p}{)}\PY{+w}{ }\PY{n}{a}\PY{+w}{ }\PY{n}{b}\PY{+w}{ }\PY{k+kr}{in}
+\PY{+w}{  }\PY{n}{foldr}\PY{+w}{ }\PY{n}{plus}\PY{+w}{ }\PY{p}{(}\PY{n}{bottomXD}\PY{+w}{ }\PY{n}{strt}\PY{p}{)}\PY{+w}{ }\PY{n}{tmp}
+
+\PY{n+nf}{run1}
+\PY{+w}{  }\PY{o+ow}{::}\PY{+w}{ }\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{k+kt}{Bool}\PY{p}{)}\PY{p}{)}\PY{+w}{ }\PY{c+c1}{\PYZhy{}\PYZhy{} \PYZca{} tf}
+\PY{+w}{  }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{p}{(}\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{k+kt}{Bool}\PY{p}{)}\PY{+w}{          }\PY{c+c1}{\PYZhy{}\PYZhy{} \PYZca{} ft}
+\PY{+w}{  }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{k+kt}{Bool}\PY{+w}{                 }\PY{c+c1}{\PYZhy{}\PYZhy{} \PYZca{} curst}
+\PY{+w}{  }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{k+kt}{Bool}\PY{+w}{                       }\PY{c+c1}{\PYZhy{}\PYZhy{} \PYZca{} inpchar}
+\PY{+w}{  }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{k+kt}{Bool}\PY{+w}{                 }\PY{c+c1}{\PYZhy{}\PYZhy{} \PYZca{} nxtst}
+\PY{n+nf}{run1}\PY{+w}{ }\PY{n}{tf}\PY{+w}{ }\PY{n}{ft}\PY{+w}{ }\PY{n}{st}\PY{+w}{ }\PY{n}{i}\PY{+w}{ }\PY{o+ow}{=}
+\PY{+w}{  }\PY{k+kr}{let}\PY{+w}{ }\PY{n}{ft\PYZsq{}}\PY{+w}{ }\PY{o+ow}{::}\PY{+w}{ }\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{k+kt}{Bool}\PY{+w}{ }\PY{o+ow}{=}\PY{+w}{ }\PY{n}{map}\PY{+w}{ }\PY{p}{(}\PY{n+nf}{\PYZbs{}}\PY{n}{f}\PY{+w}{ }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{n}{f}\PY{+w}{ }\PY{n}{i}\PY{p}{)}\PY{+w}{ }\PY{n}{ft}\PY{+w}{ }\PY{k+kr}{in}
+\PY{+w}{  }\PY{k+kr}{let}\PY{+w}{ }\PY{n}{tf\PYZsq{}}\PY{+w}{ }\PY{o+ow}{::}\PY{+w}{ }\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{k+kt}{Bool}\PY{p}{)}\PY{+w}{ }\PY{o+ow}{=}\PY{+w}{ }\PY{n}{transpose}\PY{+w}{ }\PY{o}{\PYZdl{}}\PY{+w}{ }\PY{n}{mult}\PY{+w}{ }\PY{n}{tf}\PY{+w}{ }\PY{n}{ft\PYZsq{}}\PY{+w}{ }\PY{k+kr}{in}
+\PY{+w}{  }\PY{n}{mulMxVec}\PY{+w}{ }\PY{n}{tf\PYZsq{}}\PY{+w}{ }\PY{n}{st}
+
+\PY{n+nf}{bottomXD}\PY{+w}{ }\PY{o+ow}{::}\PY{+w}{ }\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{k+kt}{Bool}\PY{+w}{ }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{k+kt}{Bool}\PY{p}{)}
+\PY{n+nf}{bottomXD}\PY{+w}{ }\PY{n}{v}\PY{+w}{ }\PY{o+ow}{=}
+\PY{+w}{  }\PY{k+kr}{let}\PY{+w}{ }\PY{n}{x}\PY{+w}{ }\PY{o+ow}{=}\PY{+w}{ }\PY{n}{const}\PY{+w}{ }\PY{k+kt}{False}\PY{+w}{ }\PY{o}{\PYZlt{}\PYZdl{}\PYZgt{}}\PY{+w}{ }\PY{n}{v}\PY{+w}{ }\PY{k+kr}{in}
+\PY{+w}{  }\PY{p}{(}\PY{n}{const}\PY{+w}{ }\PY{n}{x}\PY{p}{)}\PY{+w}{ }\PY{o}{\PYZlt{}\PYZdl{}\PYZgt{}}\PY{+w}{ }\PY{n}{x}
+
+\PY{n+nf}{bottom2D}\PY{+w}{ }\PY{o+ow}{::}\PY{+w}{ }\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{k+kt}{Bool}\PY{p}{)}\PY{+w}{ }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{k+kt}{Bool}\PY{p}{)}
+\PY{n+nf}{bottom2D}\PY{+w}{ }\PY{o+ow}{=}\PY{+w}{ }\PY{p}{(}\PY{p}{(}\PY{n}{const}\PY{+w}{ }\PY{k+kt}{False}\PY{+w}{ }\PY{o}{\PYZlt{}\PYZdl{}\PYZgt{}}\PY{p}{)}\PY{+w}{ }\PY{o}{\PYZlt{}\PYZdl{}\PYZgt{}}\PY{p}{)}
+
+\PY{c+c1}{\PYZhy{}\PYZhy{} At least one True}
+\PY{n+nf}{anyTru}\PY{+w}{ }\PY{o+ow}{::}\PY{+w}{ }\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{k+kt}{Bool}\PY{+w}{ }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{k+kt}{Bool}
+\PY{n+nf}{anyTru}\PY{+w}{ }\PY{n}{v}\PY{+w}{ }\PY{o+ow}{=}\PY{+w}{ }\PY{n}{foldr}\PY{+w}{ }\PY{p}{(}\PY{o}{||}\PY{p}{)}\PY{+w}{ }\PY{k+kt}{False}\PY{+w}{ }\PY{n}{v}
+
+\PY{n+nf}{isFinal}
+\PY{+w}{  }\PY{o+ow}{::}\PY{+w}{ }\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{k+kt}{Bool}\PY{+w}{  }\PY{c+c1}{\PYZhy{}\PYZhy{} State}
+\PY{+w}{  }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{k+kt}{Bool}\PY{+w}{  }\PY{c+c1}{\PYZhy{}\PYZhy{} Finals}
+\PY{+w}{  }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{k+kt}{Bool}\PY{+w}{        }\PY{c+c1}{\PYZhy{}\PYZhy{} Result}
+\PY{n+nf}{isFinal}\PY{+w}{ }\PY{n}{st}\PY{+w}{ }\PY{n}{fin}\PY{+w}{ }\PY{o+ow}{=}\PY{+w}{ }\PY{n}{anyTru}\PY{+w}{ }\PY{o}{\PYZdl{}}\PY{+w}{ }\PY{n}{zipWith}\PY{+w}{ }\PY{p}{(}\PY{o}{\PYZam{}\PYZam{}}\PY{p}{)}\PY{+w}{ }\PY{n}{st}\PY{+w}{ }\PY{n}{fin}
+
+\PY{c+c1}{\PYZhy{}\PYZhy{} All are False}
+\PY{n+nf}{isNull}
+\PY{+w}{  }\PY{o+ow}{::}\PY{+w}{ }\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{k+kt}{Bool}\PY{+w}{  }\PY{c+c1}{\PYZhy{}\PYZhy{} State}
+\PY{+w}{  }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{k+kt}{Bool}\PY{+w}{        }\PY{c+c1}{\PYZhy{}\PYZhy{} Result}
+\PY{n+nf}{isNull}\PY{+w}{ }\PY{n}{v}\PY{+w}{ }\PY{o+ow}{=}\PY{+w}{ }\PY{n}{not}\PY{+w}{ }\PY{o}{\PYZdl{}}\PY{+w}{ }\PY{n}{anyTru}\PY{+w}{ }\PY{n}{v}
+
+\PY{n+nf}{wr}
+\PY{+w}{  }\PY{o+ow}{::}\PY{+w}{ }\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{k+kt}{Bool}
+\PY{+w}{  }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{k+kr}{\PYZus{}}
+\PY{+w}{  }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{p}{(}\PY{k+kt}{Vec}\PY{+w}{ }\PY{k+kr}{\PYZus{}}\PY{+w}{ }\PY{k+kt}{Bool}\PY{p}{,}\PY{+w}{ }\PY{k+kt}{Bool}\PY{p}{)}
+\PY{n+nf}{wr}\PY{+w}{ }\PY{n}{st}\PY{+w}{ }\PY{n}{i}\PY{+w}{ }\PY{o+ow}{=}
+\PY{+w}{  }\PY{k+kr}{let}\PY{+w}{ }\PY{n}{st\PYZsq{}}\PY{+w}{ }\PY{o+ow}{=}\PY{+w}{ }\PY{n}{run1}\PY{+w}{ }\PY{n}{tf}\PY{+w}{ }\PY{n}{ft}\PY{+w}{ }\PY{n}{st}\PY{+w}{ }\PY{n}{i}\PY{+w}{ }\PY{k+kr}{in}
+\PY{+w}{  }\PY{k+kr}{let}\PY{+w}{ }\PY{n}{ot\PYZsq{}}\PY{+w}{ }\PY{o+ow}{=}\PY{+w}{ }\PY{n}{isFinal}\PY{+w}{ }\PY{n}{st\PYZsq{}}\PY{+w}{ }\PY{n}{finl}\PY{+w}{ }\PY{k+kr}{in}
+\PY{+w}{  }\PY{p}{(}\PY{n}{st\PYZsq{}}\PY{p}{,}\PY{+w}{ }\PY{n}{ot\PYZsq{}}\PY{p}{)}
+
+\PY{n+nf}{mon}
+\PY{+w}{  }\PY{o+ow}{::}\PY{+w}{ }\PY{k+kt}{SystemClockResetEnable}
+\PY{+w}{  }\PY{o+ow}{=\PYZgt{}}\PY{+w}{ }\PY{k+kt}{Signal}\PY{+w}{ }\PY{k+kt}{System}\PY{+w}{ }\PY{k+kr}{\PYZus{}}
+\PY{+w}{  }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{k+kt}{Signal}\PY{+w}{ }\PY{k+kt}{System}\PY{+w}{ }\PY{k+kt}{Bool}
+\PY{n+nf}{mon}\PY{+w}{ }\PY{o+ow}{=}\PY{+w}{ }\PY{n}{mealy}\PY{+w}{ }\PY{n}{wr}\PY{+w}{ }\PY{n}{strt}
+
+\PY{n+nf}{topEntity}
+\PY{+w}{  }\PY{o+ow}{::}\PY{+w}{ }\PY{k+kt}{Clock}\PY{+w}{ }\PY{k+kt}{System}
+\PY{+w}{  }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{k+kt}{Reset}\PY{+w}{ }\PY{k+kt}{System}
+\PY{+w}{  }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{k+kt}{Enable}\PY{+w}{ }\PY{k+kt}{System}
+\PY{+w}{  }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{k+kt}{Signal}\PY{+w}{ }\PY{k+kt}{System}\PY{+w}{ }\PY{k+kr}{\PYZus{}}
+\PY{+w}{  }\PY{o+ow}{\PYZhy{}\PYZgt{}}\PY{+w}{ }\PY{k+kt}{Signal}\PY{+w}{ }\PY{k+kt}{System}\PY{+w}{ }\PY{k+kt}{Bool}
+\PY{n+nf}{topEntity}\PY{+w}{ }\PY{o+ow}{=}\PY{+w}{ }\PY{n}{exposeClockResetEnable}\PY{+w}{ }\PY{n}{mon}
+\end{Verbatim}
+}

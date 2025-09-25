@@ -1,0 +1,14 @@
+  \begin{tikzpicture}
+    \begin{axis}[
+      title=LUT and Slice count,
+      xlabel={Regex size},
+      ylabel={Count},
+      % width=0.5\textwidth,
+      legend pos=north west,
+      legend entries={LUT5,LUT6,Slice}
+    ]
+      \addplot table {chapters/data/util-data/util-lut5.dat};
+      \addplot table {chapters/data/util-data/util-lut6.dat};
+      \addplot table {chapters/data/util-data/util-slice.dat};
+    \end{axis}
+  \end{tikzpicture}

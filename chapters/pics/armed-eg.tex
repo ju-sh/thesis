@@ -1,0 +1,96 @@
+\begin{tikzpicture}[node distance=1.5cm]
+  
+  % b
+  \node[state] (bp1) {};
+  \node[right of=bp1,, state, accepting] (bp2) {};
+  \draw[->] (bp1) edge node[above] {\texttt b} (bp2);
+
+  % eps
+  \node[left=of bp1, xshift=5mm, initial, state, accepting] (eps) {};
+
+  % a-plus
+  \node[below of=bp1, state, accepting] (ap2) {};
+  \node[below of=eps, initial, state] (ap1) {};
+  \draw[->] (ap1) edge node[above] {\texttt a} (ap2);
+  
+  % c
+  \node[below of=bp2, state] (cp1) {};
+  \node[right of=cp1,, state, accepting] (cp2) {};
+  \draw[->] (cp1) edge node[above] {\texttt c} (cp2);
+  
+
+  \draw[->] (eps) edge node[above] {$\varepsilon$} (bp1);
+  \draw[->] (ap2) edge node[right] {$\varepsilon$} (bp1);
+  \draw[->] (bp2) edge node[left] {$\varepsilon$} (cp1);
+  \path (ap2) edge[loop below] node {\texttt a} (ap2);
+
+  \node (abox)[
+    left of=ap2,
+    % draw=teal,
+    %label=$Verified$,
+    % fill=red!10,
+    fill=blue!20!green,
+    % fill=orange!20!yellow,
+    opacity=.3,
+    thick,
+    minimum width=3.28cm,
+    minimum height=2cm,
+    rectangle,
+    label={[font=\bfseries,text=blue]below: $(armed \land \lnot open)+$},
+    % label={[font=\bfseries,text=blue,shift=(ap2.south)]below right: $(\lnot armed)+$},
+    xshift=0.5cm,
+    yshift=-0.4cm
+  ] {};  
+
+  \node (bbox)[
+    left of=bp2,
+    % draw=teal,
+    %label=$Verified$,
+    % fill=red!10,
+    label={[font=\bfseries,text=blue] $armed \land open$},
+    fill=purple!40!green,
+    % fill=yellow!20!green,
+    opacity=.3,
+    thick,
+    minimum width=3cm,
+    minimum height=1.3cm,
+    rectangle,
+    xshift=0.8cm,
+    yshift=-0.0cm
+  ] {};  
+
+  \node (cbox)[
+    left of=cp2,
+    % draw=teal,
+    %label=$Verified$,
+    % fill=red!10,
+    % label={[font=\bfseries,text=blue] $alert$},
+    label={[font=\bfseries,text=blue]below: $alert$},
+    fill=orange!20!green,
+    opacity=.3,
+    thick,
+    minimum width=3cm,
+    minimum height=1.3cm,
+    rectangle,
+    xshift=0.8cm,
+    yshift=-0.0cm
+  ] {};  
+
+  \node (epsbox)[
+    left of=eps,
+    % label={\textbf{$\varepsilon$}},
+    label={[font=\bfseries,text=blue] $\varepsilon$},
+    % draw=teal,
+    %label=$Verified$,
+    % fill=red!10,
+    fill=red!20!blue,
+    opacity=.2,
+    thick,
+    minimum width=1.5cm,
+    minimum height=1.3cm,
+    rectangle,
+    xshift=1.5cm,
+    yshift=-0.0cm
+  ] {};  
+
+\end{tikzpicture}

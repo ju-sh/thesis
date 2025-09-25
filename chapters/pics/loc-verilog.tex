@@ -1,0 +1,13 @@
+\begin{tikzpicture}
+\begin{axis}[
+  title=LOC of designs,
+  xlabel={Regex size},
+  ylabel={LOC},
+  legend pos=north west,
+  legend entries={Haskell}
+  %legend entries={Haskell, Verilog}
+]
+  \addplot table {chapters/data/loc-data/loc-clash.dat};
+  %\addplot table {chapters/data/loc-data/loc-verilog.dat};
+\end{axis}
+\end{tikzpicture}

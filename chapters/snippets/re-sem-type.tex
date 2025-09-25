@@ -1,0 +1,17 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{Inductive} \PY{n}{sem} \PY{o}{\PYZob{}}\PY{n}{Σ} \PY{o}{:} \PY{k+kt}{Type}\PY{o}{\PYZcb{}} \PY{o}{:} \PY{n}{re} \PY{o}{(}\PY{n}{Σ} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{bool}\PY{o}{)} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{list} \PY{n}{Σ} \PY{o}{\PYZhy{}\PYZgt{}} \PY{k+kt}{Prop} \PY{o}{:=}
+\PY{o}{|} \PY{n}{SEps} \PY{o}{:} \PY{n+nb+bp}{[]} \PY{n+nb+bp}{\alecmodels} \PY{n}{Eps}
+\PY{o}{|} \PY{n}{SAtom} \PY{o}{:} \PY{k}{forall} \PY{o}{(}\PY{n}{f} \PY{o}{:} \PY{n}{Σ} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{bool}\PY{o}{)} \PY{o}{(}\PY{n}{a}\PY{o}{:} \PY{n}{Σ}\PY{o}{)}\PY{o}{,}
+    \PY{n}{f} \PY{n}{a} \PY{o}{=} \PY{n+nb+bp}{true} \PY{o}{\PYZhy{}\PYZgt{}} \PY{o}{[}\PY{n}{a}\PY{o}{]} \PY{n+nb+bp}{\alecmodels} \PY{o}{(}\PY{n}{Atom} \PY{n}{f}\PY{o}{)}
+\PY{o}{|} \PY{n}{SCat} \PY{o}{:} \PY{k}{forall} \PY{o}{(}\PY{n}{r1} \PY{n}{r2} \PY{o}{:} \PY{n}{re.t} \PY{o}{(}\PY{n}{Σ} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{bool}\PY{o}{)}\PY{o}{)} \PY{o}{(}\PY{n}{w1} \PY{n}{w2} \PY{o}{:} \PY{n}{list} \PY{n}{Σ}\PY{o}{)}\PY{o}{,}
+    \PY{n}{w1} \PY{n+nb+bp}{\alecmodels} \PY{n}{r1} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{w2} \PY{n+nb+bp}{\alecmodels} \PY{n}{r2} \PY{o}{\PYZhy{}\PYZgt{}} \PY{o}{(}\PY{n}{w1} \PY{o}{+}\PY{o}{+} \PY{n}{w2}\PY{o}{)} \PY{n+nb+bp}{\alecmodels} \PY{n}{Cat} \PY{n}{r1} \PY{n}{r2}
+\PY{o}{|} \PY{n}{SAltL} \PY{o}{:} \PY{k}{forall} \PY{o}{(}\PY{n}{r1} \PY{n}{r2} \PY{o}{:} \PY{n}{re.t} \PY{o}{(}\PY{n}{Σ} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{bool}\PY{o}{)}\PY{o}{)} \PY{o}{(}\PY{n}{w} \PY{o}{:} \PY{n}{list} \PY{n}{Σ}\PY{o}{)}\PY{o}{,}
+    \PY{n}{w} \PY{n+nb+bp}{\alecmodels} \PY{n}{r1} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{w} \PY{n+nb+bp}{\alecmodels} \PY{o}{(}\PY{n}{Alt} \PY{n}{r1} \PY{n}{r2}\PY{o}{)}
+\PY{o}{|} \PY{n}{SAltR} \PY{o}{:} \PY{k}{forall} \PY{o}{(}\PY{n}{r1} \PY{n}{r2} \PY{o}{:} \PY{n}{re.t} \PY{o}{(}\PY{n}{Σ} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{bool}\PY{o}{)}\PY{o}{)} \PY{o}{(}\PY{n}{w} \PY{o}{:} \PY{n}{list} \PY{n}{Σ}\PY{o}{)}\PY{o}{,}
+    \PY{n}{w} \PY{n+nb+bp}{\alecmodels} \PY{n}{r2} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{w} \PY{n+nb+bp}{\alecmodels} \PY{o}{(}\PY{n}{Alt} \PY{n}{r1} \PY{n}{r2}\PY{o}{)}
+\PY{o}{|} \PY{n}{SPlusD} \PY{o}{:} \PY{k}{forall} \PY{o}{(}\PY{n}{r} \PY{o}{:} \PY{n}{re.t} \PY{o}{(}\PY{n}{Σ} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{bool}\PY{o}{)}\PY{o}{)} \PY{o}{(}\PY{n}{w}\PY{o}{:} \PY{n}{list} \PY{n}{Σ}\PY{o}{)}\PY{o}{,}
+    \PY{n}{w} \PY{n+nb+bp}{\alecmodels} \PY{n}{r} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{w} \PY{n+nb+bp}{\alecmodels} \PY{o}{(}\PY{n}{Plus} \PY{n}{r}\PY{o}{)}
+\PY{o}{|} \PY{n}{SPlusM} \PY{o}{:} \PY{k}{forall} \PY{o}{(}\PY{n}{r} \PY{o}{:} \PY{n}{re.t} \PY{o}{(}\PY{n}{Σ} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{bool}\PY{o}{)}\PY{o}{)} \PY{o}{(}\PY{n}{w1} \PY{n}{w2}\PY{o}{:} \PY{n}{list} \PY{n}{Σ}\PY{o}{)}\PY{o}{,}
+    \PY{n}{w1} \PY{n+nb+bp}{\alecmodels} \PY{n}{r} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{w2} \PY{n+nb+bp}{\alecmodels} \PY{o}{(}\PY{n}{Plus} \PY{n}{r}\PY{o}{)} \PY{o}{\PYZhy{}\PYZgt{}} \PY{o}{(}\PY{n}{w1} \PY{o}{+}\PY{o}{+} \PY{n}{w2}\PY{o}{)} \PY{n+nb+bp}{\alecmodels} \PY{o}{(}\PY{n}{Plus} \PY{n}{r}\PY{o}{)}
+\PY{n}{where} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{w \alecmodels r}\PY{l+s+s2}{\PYZdq{}} \PY{o}{:=} \PY{o}{(}\PY{n}{sem} \PY{n}{r} \PY{n}{w}\PY{o}{)}\PY{o}{:} \PY{n}{re\PYZus{}scope}\PY{o}{.}
+\end{Verbatim}

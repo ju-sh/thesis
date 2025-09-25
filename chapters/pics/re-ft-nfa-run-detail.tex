@@ -1,0 +1,32 @@
+    \begin{tikzpicture}[node distance=1.5cm, auto, scale=1.0,
+  block/.style = {
+    rectangle, draw,
+  }, 
+  arrow/.style = {draw, -latex',rounded corners},
+  invisible/.style = {rectangle},
+  circular/.style = {draw, ellipse}
+    ]
+
+        \node[block] (ft) {$ft$};
+        \node[right of=ft, xshift=1cm, block] (inp) {$\sigma$};
+        \node[right of=inp, block] (tfun) {$\delta$};
+        \node[right of=tfun, block] (q) {$S_{cur}$};
+
+        \node[circular, xshift=1.25cm, below of=ft] (map) {$map$};
+        \node[circular, yshift=-5mm, below of=map] (zw1) {$zipWith$};
+        \node[circular, yshift=-5mm, below of=zw1] (u1) {$bigUnion$};
+        \node[circular, yshift=-5mm, below of=u1] (zw2) {$zipWith$};
+        \node[circular, yshift=-5mm, below of=zw2] (u2) {$bigUnion$};
+        \node[below of=u2, yshift=-5mm, block] (q') {$S_{nxt}$};
+
+        \path [arrow] (ft)  |- (map) node[left,  pos=0.25] {\scriptsize $A \vto (\Sigma \to \mathbb{B})$};
+        \path [arrow] (inp) |- (map) node[right, pos=0.25] {\scriptsize $\Sigma$};
+        \path [arrow] (tfun)  |- (zw1) node[pos=0.65] {\scriptsize $A \vto Q \vto Q \vto \mathbb{B}$};
+        \path [arrow] (q) |- (zw2) node[pos=0.75] {\scriptsize $Q \vto \mathbb{B}$};
+        %%
+        \path [arrow] (map)  edge node[left] {\scriptsize $A \vto \mathbb{B}$} (zw1);
+        \path [arrow] (zw1) edge node[left] {\scriptsize $A \vto Q \vto Q \vto \mathbb{B}$} (u1);
+        \path [arrow] (u1) edge node[left] {\scriptsize $Q \vto Q \vto \mathbb{B}$} (zw2);
+        \path [arrow] (zw2) edge node[left] {\scriptsize $Q \vto Q \vto \mathbb{B}$} (u2);
+        \path [arrow] (u2)  edge node[left] {\scriptsize $Q \vto \mathbb{B}$} (q');
+    \end{tikzpicture}

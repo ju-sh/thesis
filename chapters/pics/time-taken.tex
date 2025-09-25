@@ -1,0 +1,10 @@
+  \begin{tikzpicture}
+    \begin{axis}[
+      title=Total time taken,
+      xlabel={Regex size},
+      ylabel={Seconds},
+      legend pos=north west,
+    ]
+      \addplot table {chapters/data/time-data/time-total.dat};
+    \end{axis}
+  \end{tikzpicture}

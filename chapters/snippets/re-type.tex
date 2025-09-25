@@ -1,0 +1,8 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{Inductive} \PY{n}{re} \PY{o}{(}\PY{n}{T} \PY{o}{:} \PY{k+kt}{Type}\PY{o}{)} \PY{o}{:} \PY{k+kt}{Type} \PY{o}{:=}
+\PY{o}{|} \PY{n}{Eps} \PY{o}{:} \PY{n}{re} \PY{n}{T}
+\PY{o}{|} \PY{n}{Atom} \PY{o}{:} \PY{n}{T} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{re} \PY{n}{T}
+\PY{o}{|} \PY{n}{Cat} \PY{o}{:} \PY{n}{re} \PY{n}{T} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{re} \PY{n}{T} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{re} \PY{n}{T}
+\PY{o}{|} \PY{n}{Alt} \PY{o}{:} \PY{n}{re} \PY{n}{T} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{re} \PY{n}{T} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{re} \PY{n}{T}
+\PY{o}{|} \PY{n}{Plus} \PY{o}{:} \PY{n}{re} \PY{n}{T} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{re} \PY{n}{T}\PY{o}{.}
+\end{Verbatim}

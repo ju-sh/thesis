@@ -1,0 +1,11 @@
+\begin{tikzpicture}
+\begin{axis}[
+  title=LOC of Clash design,
+  xlabel={Regex size},
+  ylabel={LOC},
+  legend pos=north west,
+  legend entries={LOC}
+]
+  \addplot table {chapters/data/loc-data/loc-clash.dat};
+\end{axis}
+\end{tikzpicture}

@@ -1,0 +1,35 @@
+\documentclass{standalone}
+\input{preamble.tex}
+\begin{document}
+  \begin{tikzpicture}[node distance=1.5cm]
+    % Nul
+    \node[state, initial] (s0) {};
+    \node[state, accepting, right of=s0, xshift=2mm] (s1) {};
+  \end{tikzpicture}
+%   \caption{nul}
+%   \label{fa:thompson-nul}
+% \end{subfigure}%
+% \hfill%
+% \begin{subfigure}{0.5\linewidth}
+%   \centering
+%   \begin{tikzpicture}[node distance=1.5cm]
+%     % Eps
+%     \node[state, initial] (s0) {};
+%     \node[state, accepting, right of=s0, xshift=5mm] (s1) {};
+%     \draw (s0) edge node[above] {$\varepsilon$} (s1);
+%   \end{tikzpicture}%
+%   \caption{eps}
+%   \label{fa:thompson-eps}
+% \end{subfigure}
+% \begin{subfigure}{1.0\linewidth}
+%   \centering
+%   \begin{tikzpicture}[node distance=1.5cm]
+%     % Atom
+%     \node[state, initial] (s00) {};
+%     \node[state, accepting] (s01)  [right=of s00] {};
+%     \draw (s00) edge node[above] {$\sigma$} (s01);
+%   \end{tikzpicture}%
+%   \caption{atom}
+%   \label{fa:thompson-atom}
+% \end{subfigure}%
+\end{document}

@@ -1,0 +1,652 @@
+\chapter{Preliminaries}\label{ch:prelims}
+This Chapter outlines concepts that serve as background information to
+the ideas presented in later chapters.
+
+\section{Finite sets}
+Finite sets are sets whose cardinality is a finite number.
+% The number of elements in such sets is a value less than a specific
+% natural number.
+% We can have an isomorphism between the set of all natural numbers less
+% than this limit and the members of a finite set.
+It is possible to enumerate all the elements in a finite set.
+By definition, a subset of a finite set is also a finite set.
+The sets $\mathbb{Z}_3$ and $\{cyan, magenta, yellow, black\}$ are
+both examples of finite sets, whereas $\mathbb{N}$ and $\mathbb{R}$
+are not finite sets.            %
+
+\section{Languages}
+A language is a collection of words over a finite set of symbols
+called \emph{alphabet}.
+Words over an alphabet $\Sigma$ are finite sequences of symbols from
+$\Sigma$.
+Given two words $w_1$ and $w_2$ over the same alphabet $\Sigma$, a new
+word $w_1 w_2$ over $\Sigma$ can be formed by concatenating $w_1$ and
+$w_2$.
+A word $w$ is said to be part of a language $L$, if $w \in \Sigma^*$,
+where $\Sigma^*$ is the set of all sequences of symbols from $\Sigma$
+with length zero or more.
+The length of a word $w$ is the number of symbols present in it and is
+denoted using $|w|$.
+The word whose length is zero is known as the \emph{empty word} and is
+represented with $\varepsilon$.
+% The $\varepsilon$ symbol is used to denote the \emph{empty word},
+% which is a word whose length is zero.
+Languages over an alphabet $\Sigma$ are essentially subsets of
+$\Sigma^*$.
+A language is said to be empty if there is no word associated with
+that language.
+The empty language is denoted with $\emptyset$.
+Similar to how words can be concatenated, two languages $L_1$ and
+$L_2$ can be concatenated to form a new language $L_{12}$ by
+concatenating every word $w_1 \in L_1$ with each word $w_2 \in L_2$.
+i.e., $L_{12} = \{w_1w_2\ |\ w_1 \in L_1,\ w_2 \in L_2\}$.
+
+\section{Finite automata}
+A finite automaton is an abstract representation of a limited form of
+computer that is capable of recognizing a class of languages called
+\emph{regular languages}.
+It consists of a finite set of states among which state transitions
+occur in response to input symbols from an alphabet $\Sigma$.
+Finite automata can be used to model many kinds of systems, including
+software like string tokenizers and hardware like control units of
+digital circuits.
+
+% The language accepted by an automaton $A$ is denoted as $L(A)$.
+%Finite automata can function as language recognizers.
+Every finite automaton has a language associated with it.
+A finite automaton $A$ starts running from a state or set of states
+marked as initial states.
+A given word $w$ is accepted by $A$ if the state in which $A$ ends up
+after processing all characters of $w$, is a state that is considered
+a final state of $A$.
+The language accepted by the automaton $A$ is denoted as $L(A)$.
+A word $w$ is accepted by $A$ only if $w \in L(A)$.
+% The automaton $A$ starts running from a state or set of states marked
+% % as initial states.
+% A given word $w$ is accepted by $A$ if $w \in L(A)$.
+% In this case $A$ would be in a state designated as a final state by
+% the time it finishes processing the last symbol of $w$.
+% The input word is rejected by $A$ otherwise.
+% Eg: String tokenizers, control units of hardware.
+
+A given finite automaton $A$ is defined in terms of its set of states $Q$,
+sets of initial and final states, along with its transition relation
+$\delta$ that indicates the transitions which are possible between the
+different states with respect to the current input symbol $\sigma$.
+%
+The language $L(A)$ accepted by $A$ is defined in terms of $\delta^*$,
+which is the reflexive transitive closure of $\delta$.
+While $\delta$ relates the states in $Q$ with respect to a single
+symbol, $\delta^*$ relates the states with respect to an entire word.
+The automata $A$ accepts a word $w$ if $F \cap \delta^*(q_0, w) \neq
+\emptyset$ where $q_0$ is an initial state and $F$ is the set of all
+final states.
+% input word $w$ if it ends up in a final state after processing $w$.
+
+\glsreset{NFA}
+Depending on the nature of the transition relation $\delta$, finite
+automata can be classified into two: \gls{DFA} and \gls{NFA}.
+A \gls{DFA} has exactly one next state from a given state with respect
+to an input symbol, whereas a \gls{NFA} can have multiple such next
+states.
+
+\begin{definition}
+\label{def:dfa-set}
+A \gls{DFA} $D$ is defined as a quintuple $D = (Q, \Sigma, \delta,
+q_0, F)$, where
+
+\begin{itemize}
+\item $Q$: Finite set of states
+\item $\Sigma$: Finite set of input symbols
+\item $\delta: Q \times \Sigma \to Q$: Transition function
+\item $q_0 \in Q$: Initial state
+\item $F
+  \subseteq Q$: Set of final states
+\end{itemize}
+\end{definition}
+
+\begin{figure}
+\begin{mathpar}
+  \begin{array}{rcl}
+  δ^*(q, ε)   & = & q                                             \\
+  δ^*(q, σ:w) & = & δ^*(δ(q,\ σ),\ w)                             \\
+              &   &                                               \\
+  L(D)        & = & \left\{w\ |\ (F ∩ δ^*(q_0, w)) ≠ ∅ \right\} \\
+  \end{array}
+\end{mathpar}
+\caption{Language accepted by a DFA $D = (Q, \Sigma, \delta, q_0, F)$}
+\label{fig:dfa-lang}
+\end{figure}
+
+NFAs are a generalization of DFAs whose transition relation δ can
+relate the current state to multiple next states for the same input.
+
+\begin{definition}
+\label{def:nfa-set}
+An \gls{NFA} $N$ is defined as a quintuple $N = (Q, \Sigma, \delta,
+Q_{0}, F)$, where
+
+\begin{itemize}
+\item $Q$: Finite set of states
+\item $\Sigma$: Finite set of input symbols
+\item $\delta: Q \times \Sigma \to P(Q)$: Transition function
+\item $Q_0 \subseteq Q$: Set of initial states
+\item $F \subseteq Q$: Set of final states
+\end{itemize}
+\end{definition}
+
+The class of languages accepted by both DFAs~(Fig. \ref{fig:dfa-lang})
+and NFAs~(Fig. \ref{fig:nfa-lang}) are the same, which is the class of
+regular languages.
+A language is regular only if there is a finite automata capable of
+recognizing it.
+\cite{kleene1951regex}
+
+\begin{figure}
+\begin{mathpar}
+  \begin{array}{rcl}
+  δ^*(qs, ε)   & = & qs                                            \\
+  δ^*(∅, w)    & = & ∅                                             \\
+  δ^*(qs, σ:w) & = & \left\{δ^*(δ(q,σ),\ w)\ |\ q ∈ qs \right\}  \\
+               &   &                                               \\
+  L(N)         & = & \left\{w\ |\ (F ∩ δ^*(Q_0, w)) ≠ ∅ \right\} \\
+  \end{array}
+\end{mathpar}
+\caption{Language accepted by an NFA $N = (Q, \Sigma, \delta, Q_0, F)$}
+\label{fig:nfa-lang}
+\end{figure}
+
+% Why non-determinism
+Non-determinism allows non-deterministic automata to be described more
+concisely than their deterministic counterparts.
+This often makes \glspl{NFA} easier to build and understand when
+compared to \glspl{DFA}.
+For example, many algorithms for DFA construction construct
+the corresponding NFA as an intermediate step.
+
+\section{Regular expressions} \label{sec:re-overview}
+\Glspl{rgx} are notations representing regular languages.
+They are used in a wide variety of applications ranging from matching
+patterns in text editors to protein sequencing in computational
+biology~\cite{stephens2005oracle}.
+\Glspl{rgx} are defined inductively as shown in
+Fig~\ref{gram:classic-re-syntax}.
+Each \gls{rgx} corresponds to a regular language as shown in
+Fig~\ref{gram:classic-re-lang}~\cite{kleene1951regex}.
+The empty language and the empty string are represented with
+$\emptyset$ and $\varepsilon$ respectively.
+\emph{Atoms} indicate the actual characters that are to be matched.
+$r_1; r_2$ represents the concatenation of languages $L(r_1)$ and
+$L(r_2)$ and $r_1 | r_2$ denotes the union of $L(r_1)$ and $L(r_2)$.
+% The language formed by concatenating words in a language $L(r)$
+% corresponding to a given \gls{rgx} $r$ zero or more times is
+% represented by $r^*$.
+The regex corresponding to a language $L(r^*)$ is formed by
+concatenating the words matched by a regex $r$ zero or more times is
+denoted with $r^*$.
+%
+The size of a \gls{rgx} $r$ is the number of atoms it contains
+and is represented with $|r|$.
+
+\begin{figure}
+\begin{subfigure}{0.3\linewidth}
+\begin{mathpar}%\scriptsize
+\begin{array}{rcll}
+r         & :=    & \emptyset                                   \\
+          & \Big| & \varepsilon                                 \\
+          & \Big| & \sigma                                      \\ 
+          & \Big| & r_1;r_2                                     \\ 
+          & \Big| & r_1|r_2                                     \\ 
+          & \Big| & r^*                                         \\
+\end{array}
+\end{mathpar}
+\caption{Syntax}
+\label{gram:classic-re-syntax}
+\end{subfigure}%
+\hfill%
+\begin{subfigure}{0.7\linewidth}
+\begin{mathpar}
+\begin{array}{rcl}
+L(∅)      & =     & \{\}                                        \\
+L(ε)      & =     & \{\varepsilon\}                             \\
+L(\sigma) & =     & \{c \mid c = \sigma\}                       \\
+L(r₁;r₂)  & =     & \{w₁w₂ \mid w₁ ∈ L(r₁) ∧ w₂ ∈ L(r₂)\}       \\
+L(r₁|r₂)  & =     & \{w \mid w ∈ L(r₁) ∨ w ∈ L(r₂)\}            \\
+L(r^*)    & =     & \{w \mid w ∈ L(r;r^*) ∨ w ∈ L(\varepsilon)\} \\
+\end{array}
+\end{mathpar}
+\caption{Language}
+\label{gram:classic-re-lang}
+\end{subfigure}
+\caption{Classic regex}
+\label{fig:rgx}
+\end{figure}
+
+\section{State explosion problem} \label{sec:nfa-sim-overview}
+We saw that any given \gls{rgx} $r$ has a corresponding finite
+automata that accepts the same language as $L(r)$.
+A \gls{DFA} corresponding to the \gls{rgx} $r$ can be used to build a
+machine runnable matcher capable of checking whether a given
+word $w$ is part of $L(r)$.
+
+However, a \gls{rgx}-to-\gls{DFA} conversion results in a state space
+explosion.
+For a given \gls{rgx} $r$ of size $|r|$, the number of states in a
+corresponding \gls{DFA} is $O(2^{|r|})$.
+This means that the space required to store the $\delta$ of such a
+\gls{DFA} would be in the order of $O(2^{2|r|})$.
+Such an exponential blow-up of state count makes running of
+\glspl{DFA} for large \glspl{rgx} intractable.
+In such a scenario, the transition matrix can get prohibitively huge
+for large regexes.
+%
+In contrast, the state count of the \gls{NFA} corresponding to the
+same \gls{rgx} $r$ is in the order of $O(|r|)$.
+Though \glspl{NFA} can have multiple states active at the same time,
+the set of active states of an \gls{NFA} can be represented with
+$O(|r|)$ space.
+This is possible by encoding the \gls{NFA} states as bitvectors.
+% The set of \gls{NFA} states may be represented as a bitvector, where
+Each bit of such a bitvector corresponds to an \gls{NFA}-state.
+The set bits indicate the set of currently active states.
+Using a bitvector representation, it is possible to represent the
+$\delta$ of an \gls{NFA} using $O(|r|^2)$ space.
+In this way, the running of a \gls{NFA} can be \emph{simulated} while
+keeping the space required to store the transition information of the
+finite automaton low.
+
+\begin{mathpar}
+  \delta: Q \times \Sigma \to P(Q) \and
+  cur \subseteq Q \and
+  \sigma \in \Sigma \\
+  nxt(cur)\ = \bigcup \bigcup\limits_{q \in cur}^{} \delta(q, \sigma) \and
+  isfinal(cur)\ = cur \cap F \neq \emptyset
+\end{mathpar}
+
+
+\section{NFA construction algorithm} \label{sec:thompson-overview}
+As we saw earlier, every \gls{rgx} has a corresponding finite automata
+capable of accepting words from the language associated with that
+\gls{rgx}.
+There are many algorithms to generate the finite automata
+corresponding to a given \gls{rgx}.
+One such algorithm is credited to McNaughton, Yamada and
+Thompson~\cite{mcnaughton1960regular,thompson1968nfa} and is commonly
+known as Thompson's algorithm.
+In this algorithm, the given \gls{rgx} $r$ is converted to a
+corresponding \gls{NFA} $N(r)$.
+This conversion is performed recursively based on the structure of the
+given \gls{rgx}.
+
+\begin{figure}
+  \centering
+  \input{chapters/pics/fa-thompson-base.tex}
+  \caption{Thompson base}
+  \label{fa:thompson-base}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+  \input{chapters/pics/fa-thompson-cat.tex}
+  \caption{Thompson cat}
+  \label{fa:thompson-cat}
+\end{figure}
+
+
+\begin{figure}
+  \centering
+  \input{chapters/pics/fa-thompson-alt.tex}
+  \caption{Thompson alt}
+  \label{fa:thompson-alt}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \input{chapters/pics/fa-thompson-star.tex}
+  \caption{Thompson star}
+  \label{fa:thompson-star}
+\end{figure}
+% One such algorithm is credited to McNaughton, Yamada and Thompson
+% \cite{mcnaughton1960regular,thompson1968nfa}.
+% This algorithm converts a given \gls{rgx} $r$ to a correpsonding
+% \gls{NFA} $N(r)$.
+%This conversion is performed recursively based on the structure of the
+%given \gls{rgx}.
+
+
+The \gls{NFA} corresponding to the \gls{rgx} $\emptyset$ can be made
+as an automaton with two states~\cite{hopcroft2001book}, where one
+state is the initial state and the other is the final state
+(Fig.~\ref{fa:thompson-nul}).
+Since $\emptyset$ represents the empty language, this \gls{NFA} does
+not accept any words.
+Hence, no transition is possible from the initial state to the final
+state.
+The \gls{NFA} $N(\varepsilon)$ may also be made as a two-state
+automata, but with an $\varepsilon$-transition from the initial state
+to the final state (Fig.~\ref{fa:thompson-eps}).
+Two states suffice for a \gls{rgx} for the \gls{NFA} $N(\sigma)$
+corresponding atoms as well, but the transition from initial to final
+state happens only when input symbol $i$ is same as the expected
+symbol $\sigma$ (Fig.~\ref{fa:thompson-atom}).
+%
+Given two \glspl{NFA} $N_1$ and $N_2$ corresponding to two \glspl{rgx}
+$r_1$ and $r_2$ respectively, the \gls{NFA} $N_{1;2}$ corresponding to
+the \gls{rgx} $r_1;r_2$ can be obtained by adding
+$\varepsilon$-transitions from the final states of $N_1$ to the
+initial state of $N_2$ (Fig.~\ref{fa:thompson-cat}).
+The start states of $N_1$ and final states of $N_2$ would become the
+start state and final states respectively of $N_{1;2}$.
+Similarly, the \gls{NFA} $N_{1|2}$ for $r_1|r_2$ can be obtained by
+making two new states as the start state and final state of $N_{1|2}$
+and adding $\varepsilon$-transitions from the start state of $N_{1|2}$
+to the start states of both $N_1$ and $N_2$ and from the final states
+of $N_1$ and $N_2$ to the final state of $N_{1|2}$
+(Fig.~\ref{fa:thompson-alt}).
+Like in the case of $r_1|r_2$, given an \gls{NFA} $N$ corresponding to
+a \gls{rgx} $r$, the \gls{NFA} $N^*$ associated with the \gls{rgx}
+$r^*$ can be made by inserting two new states to function as the start
+and final states of $N^*$
+(Fig.~\ref{fa:thompson-star}).
+We add $\varepsilon$-transitions from the start state of $N^*$ to its
+final state, final state of $N$ to its start state, from the start
+state of $N^*$ to start state of $N$ and from the final state of $N$
+to the final state of $N^*$.
+Thus, we can construct an \gls{NFA} $N(r)$ corresponding to a given
+\gls{rgx} $r$.
+
+Instead of converting the \gls{NFA} to an equivalent \gls{DFA} to run
+the matcher, Thompson's algorithm simulates the \gls{NFA} itself by
+keeping track the set of active states as a bitvector.
+Thereby avoiding the exponential growth in the transition table size
+as was mentioned in Section~\ref{sec:nfa-sim-overview}.
+
+%% \begin{mathpar}
+%% q'\ = \bigcup\limits_{q \in cur}^{}
+%%       \bigcup\limits_{a \in H}^{}
+%%       \delta(a, q)
+%% \end{mathpar}
+
+\section{Mealy machines}
+The \glspl{DFA} and \glspl{NFA} whose definitions that we saw in
+earlier sections are finite state acceptors.
+For a given automaton $A$ and an input word $w$, state transitions
+occur within $A$ while processing the symbols of $w$, and depending on
+the active state of $A$ after processing all the symbols in $w$, we
+are able to say whether $w$ was part of $L(A)$ or not.
+Note that finite automata by itself do not give any output.
+%
+Mealy machines~\cite{mealy1955method} are a kind of finite state
+machines that generate output as they run.
+Unlike finite automata, Mealy machines do not have a final state.
+Each transition of a Mealy machine has an output symbol associated
+with it.
+Definition of a Mealy machine is similar to that of a \gls{DFA} except
+for the absence of the notion of final state and the addition of an
+output alphabet and output function.
+
+\begin{definition}
+\label{def:mealy-set}
+A Mealy machine $M$ is defined as a 6-tuple $M = (Q, \Sigma, \Gamma,
+\delta, \theta, q_0)$, where
+
+\begin{itemize}
+\item $Q$: Finite set of states
+\item $\Sigma$: Finite set of input symbols
+\item $\Gamma$: Finite set of output symbols
+\item $\delta: Q \times \Sigma \to Q$: Transition function
+\item $\theta: Q \times \Sigma \to \Gamma$: Output function
+\item $q_0 \in Q$: Initial state
+\end{itemize}
+
+% With addition of an output function, the transition information of an
+% \gls{NFA} built using Thompson's algorithm that we earlier can be used
+% to build a Mealy machine.
+
+% TODO: hardware can be modeled as Mealy machines
+
+An \gls{NFA} constructed using Thompson's algorithm that we saw
+earlier can be simulated using a Mealy machine.
+\end{definition}
+
+
+
+\glsreset{NFA}
+\section{PSL and SERE}
+Correctness is expressed as formal specifications in formal
+verification.
+Such specifications are written in a formally defined language with unambiguous
+semantics.
+\gls{PSL} is a language commonly used in the hardware
+industry to express correctness properties of circuits.
+Syntax of \gls{PSL} properties are shown in Fig.~\ref{fig:sere-syntax}.
+There are two styles in which \gls{PSL} properties can be written:
+\gls{LTL}-style and \gls{SERE}-style.
+The \gls{SERE}-style is more popular among hardware designers as they
+are based on a generalized form of \glspl{rgx}.
+The term \gls{SERE} refers to these \glspl{rgx}. The atoms of
+\glspl{SERE} are over boolean functions from the input alphabet.
+\glspl{SERE} with boolean equality on input alphabet correspond to the
+classic \glspl{rgx}.
+Syntax and semantics of \gls{SERE} are shown in
+Fig.~\ref{fig:sere-syntax} and Fig.~\ref{fig:re-sem} respectively.
+
+  \begin{figure}
+    \begin{mathpar}
+      \begin{array}{rcll}
+        r & :=    & \varepsilon & (empty)             \\
+          & \Big| & b           & (boolean\ function) \\
+          & \Big| & \{r\}       & (grouping)          \\
+          & \Big| & r\ ;r       & (concat)            \\
+          & \Big| & r | r       & (choice)            \\
+          & \Big| & r\ \&\&\ r  & (concurrent\ and)   \\
+          & \Big| & r : r       & (fuse)              \\
+          & \Big| & r^*         & (star)              \\
+      \end{array}
+    \end{mathpar}
+    \caption{SERE syntax}
+    \label{fig:sere-syntax}
+  \end{figure}
+
+\begin{figure}
+    \begin{mathpar}
+    \begin{array}{rclcl}
+w & \modelsere & \varepsilon & \iff & w = nil                               \\
+w & \modelsere & b           & \iff & |v| = 1 \ \land \ v[0] \modelbool b   \\
+w & \modelsere & r_1;r_2       & \iff & \exists w_1 \ w_2, \
+                                      w=w_1 \cdot w_2 \ \land \
+                                      w_1 \modelsere r_1 \ \land \
+                                      w_2 \modelsere r_2                      \\
+w & \modelsere & r_1|r_2       & \iff & w \modelsere r_1 \ \lor \
+                                      w \modelsere r_2                       \\
+w & \modelsere & r_1:r_2       & \iff & \exists w_1 \ a \ w_2, \
+                                      w=w_1 \cdot [a] \cdot w_2 \land
+                                      w_1 \cdot [a] \modelsere r_1 \land
+                                      [a] \cdot w_2 \modelsere r_2            \\
+w & \modelsere & r_1\ \&\&\ r_2  & \iff & w \modelsere r_1 \land w \modelsere r_2 \\
+w & \modelsere & r^*         & \iff & w \modelsere \varepsilon \  \lor
+                                      \exists w_1 w_2, w = w_1 \cdot w_2 \land
+                                      w_1 \neq nil \land
+                                      w_1 \modelsere r \land
+                                      w_2 \modelsere r^*                      \\
+
+    \end{array}
+    \end{mathpar}
+  \caption{SERE semantics}
+  \label{fig:re-sem}
+\end{figure}
+
+
+
+  % \begin{figure}
+  %   % {\scriptsize
+  %     \begin{mathpar}
+  %       \begin{array}{lcl}
+  %         w \models [*0]  & \to & 
+  %           w = nil                                            \\
+  %         w \models f            & \to & 
+  %           (w = [c]) \land (f c = true)                       \\
+  %         w \models (r1;r2)      & \to & 
+  %           \exists\ w1\ w2, \ (w = w1 \cdot w2) \land (w1 \models r1)
+  %                                        \land (w2 \models r2) \\
+  %         w \models (r1 \lor r2) & \to & 
+  %           (w \models r1) \lor (w \models r2)                 \\
+  %         w \models (r1\ \&\& r2) & \to & 
+  %           (w \models r1) \land (w \models r2)                 \\
+
+  %         w \models (r1 : r2) & \to & 
+  %           \exists\ w1\ w2\ c, \ 
+  %              (w = w1 \cdot c \cdot w2) \land
+  %              (w1 \cdot c \models r1) \land
+  %              (c \cdot w2 \models r2)               \\
+  %         w \models r[*]      & \to & 
+  %           (w \models [*0]) \lor (w \models (r;r*)) \\
+  %       \end{array}
+  %     \end{mathpar}
+  %     \caption{SERE semantics}
+  %     \label{fig:re-sem}
+  %   % }
+  % \end{figure}
+
+\section{Coq}
+Coq is an interactive theorem prover. It allows us to create formal
+definitions and reason about them by building formal proofs.
+By means of a feature called \emph{extraction}, Coq offers a way to
+write programs that are certified correct.
+Extraction is the process of converting terms within Coq, which are
+written in a functional-style programming language named
+\emph{Gallina}, into equivalent terms in a different programming
+language.
+% specifications and reason about them.
+%The notation system allows us to make eDSLs using which.
+%
+% \subsection{Extraction}
+% An attractive feature of Coq is \emph{extraction}.
+This is possible due to a deep underlying connection between proofs
+and programs~\cite{howard1980formulae}.
+The extraction procedure maps parts of a given Coq term which are
+relevant for computation to corresponding constructs in the target
+programming language while also removing parts that are useful only
+for proofs.
+It is worth noting that the extraction procedure itself is not
+verified correct.
+Therefore, any development that involves extraction considers the
+extraction procedure as part of a trusted codebase.
+% The extraction mechanism of Coq is more developed when comparand
+% hence easeirWhen compared to many other theorem provers, the extract
+In addition, the parser of Coq is highly customizable, thereby
+allowing the creation of \glspl{DSL} within Coq.
+
+% Though the default extraction procedure of Coq allows for the
+% conversion of Coq code to general purpose programming languages like
+% Haskell and OCaml, there is no built-in support for conversion to an
+% \gls{HDL}.
+
+\section{Related work} \label{sec:literature}
+Due to the wide range of applications where fast string-based pattern
+matching is useful, many approaches of constructing hardware-based
+\gls{rgx} matchers have been explored in the past.
+Such implementations are primarily made using \glspl{FPGA}.
+% \gls{GPU}~\cite{vasiliadis2009regular,yu2013gpu} and their
+% combinations~\cite{sidler2017accelerating}.
+%% \gls{CPU}, \gls{GPU}, \gls{GPGPU} and \gls{FPGA}.
+%
+Most of the \gls{FPGA}-based regex matchers use Thompson's
+construction~\cite{thompson1968nfa} to build the hardware automata
+model corresponding to the input \gls{rgx}.
+Usually, a simulation of \gls{NFA} is used for running the matcher as
+opposed to directly building the corresponding \gls{DFA}.
+This is done to minimize the space needed to store the automata
+information, thereby enhancing scalability.
+
+One of the earliest works on \gls{FPGA} implementations of \gls{rgx}
+matchers is by \citet{floyd1982compilation}
+which maps an \gls{NFA} corresponding to input \gls{rgx} to \gls{PLA}.
+%
+\citet{sidhu2001fast} gives a method to build matchers on \glspl{FPGA}
+using \glspl{NFA}.
+\citet{yang2011high} uses a modified form of McNaughton-Yamada
+algorithm \cite{mcnaughton1960regular} to map \glspl{NFA} to circuits.
+%% capable of matching multiple input symbols at once.
+%
+%% \citet{yang2011space} uses a form of automata that is midway between
+%% \gls{NFA} and \gls{DFA} in terms of complexity to perform
+% DBT: O(√n) how?
+%% Driven by the need to match multiple \glspl{rgx} at once in \gls{NIDS}
+%% applications, multiple approaches have been adopted to increase the
+%% number of \glspl{rgx} that can be matched with maximum throughput.
+%
+%% Works like example is \citet{van2012hardware}.
+%
+The need for matching multiple \glspl{rgx} at once in Network
+Intrusion Detection System
+applications led to the development of multiple approaches to increase
+the number of \glspl{rgx} that can be matched simultaneously in
+addition to maximizing throughput.
+%
+An example of this is the work by \citet{van2012hardware}, which
+allows \gls{rgx} constructs like character classes to be mapped to
+hardware more effectively while also enhancing state sharing.
+
+
+
+%% A lot of research has gone into processing multiple \glspl{rgx} at
+%% once for use in \glspl{NIDS}.
+%% In
+
+Dedicated hardware architectures for \gls{rgx} matching also exist.
+Automata processor~\cite{micronAP} uses a domain specific architecture
+for \gls{rgx} matching.
+It is a reconfigurable design onto which transition information of the
+automata to be run can be loaded.
+% DBT: How is the re to nfa conversion done though?
+%
+%% Changes in the input automata does not necessitate any change to the
+%% hardware design as only the instructions stored in memory need to be
+%% changed.
+%
+CICERO~\cite{cicero} is another architecture that divides string
+matching into multiple stages which allows for a certain level of
+pipelining.
+It uses Thompson's algorithm to convert \gls{rgx} into a set of
+instructions which are then processed by hardware.
+%
+Similar to the case in automata processor, changes in the input
+\gls{NFA} do not necessitate any change to CICERO's matching engine,
+as only the instructions stored in memory need to be changed.
+
+
+% - NFA over a smaller DFAs
+% - Multiple chars per clock
+% - Hueristics
+% - ⨯ Use in GPU
+% - ✗ Use in CPU
+% - Use in CPU/GPU/FPGA hybrid
+
+Multiple formally verified software implementations of \gls{rgx}
+matchers are already available.
+%% Work has been done on producing certifiably correct \gls{rgx}
+%% matchers.
+However, none of them produce designs that can directly be
+converted to synthesizable hardware designs as they are either
+optimized for proofs or for extraction to software.
+Reglang~\cite{reglang} uses Coq to formalize and prove a wide range of
+properties about \gls{rgx}, finite automata and regular languages
+using the mathcomp library~\cite{mathcompbook}.
+However, reglang is geared towards convenience with which correctness
+proofs may be constructed rather than extractability.
+Because of this, \gls{rgx} matchers that can be derived from reglang do not
+extract in a manner which can be used to build synthesizable hardware designs.
+\citet{firsov2013} uses Agda to create \glspl{NFA} proven to be
+capable of matching given \glspl{rgx}.
+This work uses linear algebraic operations to construct \gls{NFA}
+using Thompson's algorithm.
+Though the authors did not attempt to produce equivalent hardware, this
+approach is suitable for it.
+\citet{noeRegex} introduces a proven correct Coq formalization of
+JavaScript \glspl{rgx} which can be extracted to OCaml.
+Similarly, \citet{rice2025} provides a linear-time \gls{rgx} matching
+algorithm formalized in Coq.
+The \gls{rgx} used by all these works is the classic \glspl{rgx} and
+assumes an equality check as the operation associated with atoms.

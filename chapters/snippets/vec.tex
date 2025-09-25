@@ -1,0 +1,14 @@
+{\small
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{Inductive} \PY{n}{func} \PY{o}{(}\PY{n}{A} \PY{o}{:} \PY{k+kt}{Type}\PY{o}{)}
+  \PY{o}{:} \PY{n}{sort} \PY{o}{\PYZhy{}\PYZgt{}} \PY{k+kt}{Type} \PY{o}{:=}
+\PY{o}{|} \PY{n}{Zero}\PY{o}{:} \PY{l+m+mi}{𝟶}\PY{o}{\PYZpc{}}\PY{n}{sort} \PY{n+nb+bp}{↝} \PY{n}{A}
+\PY{o}{|} \PY{n}{One}\PY{o}{:} \PY{n}{A} \PY{o}{\PYZhy{}\PYZgt{}} \PY{l+m+mi}{𝟷}\PY{o}{\PYZpc{}}\PY{n}{sort} \PY{n+nb+bp}{↝} \PY{n}{A}
+\PY{o}{|} \PY{n}{Add}\PY{o}{:} \PY{k}{forall} \PY{o}{(}\PY{n}{s1} \PY{n}{s2} \PY{o}{:} \PY{n}{sort}\PY{o}{)}\PY{o}{,}
+       \PY{n}{s1} \PY{n+nb+bp}{↝} \PY{n}{A}
+    \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{s2} \PY{n+nb+bp}{↝} \PY{n}{A}
+    \PY{o}{\PYZhy{}\PYZgt{}} \PY{o}{(}\PY{n}{s1} \PY{o}{+} \PY{n}{s2}\PY{o}{)}\PY{o}{\PYZpc{}}\PY{n}{sort} \PY{n+nb+bp}{↝} \PY{n}{A}
+\PY{n}{where} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{s ↝ A}\PY{l+s+s2}{\PYZdq{}} \PY{o}{:=} \PY{o}{(}\PY{n}{func} \PY{n}{A} \PY{n}{s}\PY{o}{)} \PY{o}{:} \PY{n}{func\PYZus{}scope}\PY{o}{.}
+\PY{n}{Infix} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{+}\PY{l+s+s2}{\PYZdq{}} \PY{o}{:=} \PY{n}{Add} \PY{o}{:} \PY{n}{func\PYZus{}scope}\PY{o}{.}
+\end{Verbatim}
+}

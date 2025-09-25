@@ -1,0 +1,20 @@
+% Define the Verilog style for listings
+\lstset{
+    language=Verilog,
+    basicstyle=\ttfamily\footnotesize,   % Set the font to typewriter and size to footnotesize
+    keywordstyle=\color{blue},            % Keywords in blue
+    commentstyle=\color{gray},            % Comments in gray
+    stringstyle=\color{red},              % Strings in red
+    identifierstyle=\color{black},        % Identifiers in black
+    morekeywords={always, assign, if, else, module, endmodule, input, output},  % Additional Verilog keywords
+    numbers=left,                         % Line numbers on the left
+    numberstyle=\tiny\color{gray},        % Line number style
+    stepnumber=1,                         % Line number step
+    numbersep=5pt,                        % Distance between line numbers and code
+    frame=single,                         % Add a frame around the code
+    breaklines=true,                      % Break long lines
+    showstringspaces=false                % Do not show spaces in strings
+}
+
+% Define a new Verilog environment
+\lstnewenvironment{verilog}{\lstset{language=Verilog}}{}

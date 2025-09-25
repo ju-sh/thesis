@@ -1,0 +1,14 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{module}\PY{+w}{ }\PY{n}{typerr}\PY{+w}{ }\PY{p}{(}
+\PY{+w}{    }\PY{k}{input}\PY{+w}{ }\PY{p}{[}\PY{l+m+mh}{2}\PY{o}{:}\PY{l+m+mh}{0}\PY{p}{]}\PY{+w}{ }\PY{n}{x}\PY{p}{,}
+\PY{+w}{    }\PY{k}{output}\PY{+w}{ }\PY{n}{msb}
+\PY{p}{)}\PY{p}{;}
+
+\PY{+w}{  }\PY{k+kt}{wire}\PY{+w}{ }\PY{p}{[}\PY{l+m+mh}{1}\PY{o}{:}\PY{l+m+mh}{0}\PY{p}{]}\PY{+w}{ }\PY{n}{less}\PY{p}{;}
+\PY{+w}{  }\PY{k+kt}{wire}\PY{+w}{ }\PY{p}{[}\PY{l+m+mh}{3}\PY{o}{:}\PY{l+m+mh}{0}\PY{p}{]}\PY{+w}{ }\PY{n}{more}\PY{p}{;}
+
+\PY{+w}{  }\PY{c+c1}{// No error}
+\PY{+w}{  }\PY{k}{assign}\PY{+w}{ }\PY{n}{less}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{x}\PY{p}{;}
+\PY{+w}{  }\PY{k}{assign}\PY{+w}{ }\PY{n}{more}\PY{+w}{ }\PY{o}{=}\PY{+w}{ }\PY{n}{x}\PY{p}{;}
+\PY{k}{endmodule}
+\end{Verbatim}

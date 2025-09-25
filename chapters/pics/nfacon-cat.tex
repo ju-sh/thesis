@@ -1,0 +1,35 @@
+  \begin{tikzpicture}[
+    node distance=1.5cm, % Minimum distance between two nodes. Change if necessary.
+    every state/.style={ % Sets the properties for each state
+    semithick,
+    fill=gray!10},
+    initial text={}, % No label on start arrow
+    double distance=2pt, % Adjust appearance of accept states
+    every edge/.style={ % Sets the properties for each transition
+    draw,
+    ->,>=stealth', % Makes edges directed with bold arrowheads
+    auto,
+    semithick}
+  ]
+    % Cat
+    \node[state, initial] (s00) {s00};
+    \node[state, right of=s00] (s01) {s01};
+    \node (s02) [right=of s01, xshift=-1cm] {$\cdots$};
+    \node[state, accepting, right of=s02] (s03) {s03};
+  
+    \node[state, initial, right of=s03, xshift=1cm] (s10) {s10};
+    \node[state, right of=s10] (s11) {s11};
+    \node (s12) [right=of s11, xshift=-1cm] {$\cdots$};
+    \node[state, accepting, right of=s12] (s13) {s13};
+  
+  
+    \draw (s00) edge node {$\sigma$} (s01);
+    \draw (s01) edge node {$\sigma$} (s02);
+    \draw (s02) edge node {$\sigma$} (s03);
+  
+    \draw (s10) edge node {$\sigma$} (s11);
+    \draw (s11) edge node {$\sigma$} (s12);
+    \draw (s12) edge node {$\sigma$} (s13);
+  
+    \draw (s03) edge[bend left, above] node {$\varepsilon$} (s10);
+  \end{tikzpicture}

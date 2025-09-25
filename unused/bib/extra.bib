@@ -1,0 +1,117 @@
+% Encoding: UTF-8
+
+@Article{augustsson2023verse,
+  author    = {Augustsson, Lennart and Breitner, Joachim and Claessen, Koen and Jhala, Ranjit and Peyton Jones, Simon and Shivers, Olin and Steele Jr, Guy L and Sweeney, Tim},
+  title     = {The Verse Calculus: A Core Calculus for Deterministic Functional Logic Programming},
+  journal   = {Proceedings of the ACM on Programming Languages},
+  year      = {2023},
+  volume    = {7},
+  number    = {ICFP},
+  pages     = {417--447},
+  publisher = {ACM New York, NY, USA},
+}
+
+@InProceedings{10.1145/1375581.1375602,
+  author    = {Rondon, Patrick M. and Kawaguci, Ming and Jhala, Ranjit},
+  title     = {Liquid Types},
+  booktitle = {Proceedings of the 29th ACM SIGPLAN Conference on Programming Language Design and Implementation},
+  year      = {2008},
+  series    = {PLDI '08},
+  pages     = {159–169},
+  address   = {New York, NY, USA},
+  publisher = {Association for Computing Machinery},
+  abstract  = {We present Logically Qualified Data Types, abbreviated to Liquid Types, a system that combines Hindley-Milner type inference with Predicate Abstraction to automatically infer dependent types precise enough to prove a variety of safety properties. Liquid types allow programmers to reap many of the benefits of dependent types, namely static verification of critical properties and the elimination of expensive run-time checks, without the heavy price of manual annotation. We have implemented liquid type inference in DSOLVE, which takes as input an OCAML program and a set of logical qualifiers and infers dependent types for the expressions in the OCAML program. To demonstrate the utility of our approach, we describe experiments using DSOLVE to statically verify the safety of array accesses on a set of OCAML benchmarks that were previously annotated with dependent types as part of the DML project. We show that when used in conjunction with a fixed set of array bounds checking qualifiers, DSOLVE reduces the amount of manual annotation required for proving safety from 31\% of program text to under 1\%.},
+  doi       = {10.1145/1375581.1375602},
+  isbn      = {9781595938602},
+  keywords  = {type inference, hindley-milner, predicate abstraction, dependent types},
+  location  = {Tucson, AZ, USA},
+  numpages  = {11},
+  url       = {https://doi.org/10.1145/1375581.1375602},
+}
+
+@Article{kallehbasti2020bit,
+  author    = {Kallehbasti, Mohammad Mehdi Pourhashem and Rossi, Matteo and Baresi, Luciano},
+  title     = {On how bit-vector logic can help verify LTL-based specifications},
+  journal   = {IEEE Transactions on Software Engineering},
+  year      = {2020},
+  volume    = {48},
+  number    = {4},
+  pages     = {1154--1168},
+  publisher = {IEEE},
+}
+
+@InProceedings{jeffrey2012ltl,
+  author    = {Jeffrey, Alan},
+  title     = {LTL types FRP: linear-time temporal logic propositions as types, proofs as functional reactive programs},
+  booktitle = {Proceedings of the sixth workshop on Programming languages meets program verification},
+  year      = {2012},
+  pages     = {49--60},
+}
+
+@InProceedings{barre2013mapreduce,
+  author       = {Barre, Benjamin and Klein, Mathieu and Soucy-Boivin, Maxime and Ollivier, Pierre-Antoine and Hall{\'e}, Sylvain},
+  title        = {MapReduce for parallel trace validation of LTL properties},
+  booktitle    = {Runtime Verification: Third International Conference, RV 2012, Istanbul, Turkey, September 25-28, 2012, Revised Selected Papers 3},
+  year         = {2013},
+  pages        = {184--198},
+  organization = {Springer},
+}
+
+@Article{rocsu2005rewriting,
+  author    = {Ro{\c{s}}u, Grigore and Havelund, Klaus},
+  title     = {Rewriting-based techniques for runtime verification},
+  journal   = {Automated Software Engineering},
+  year      = {2005},
+  volume    = {12},
+  number    = {2},
+  pages     = {151--197},
+  publisher = {Springer},
+}
+
+@Article{cheng2010linear,
+  author    = {Cheng, Daizhan and Qi, Hongsheng},
+  title     = {A linear representation of dynamics of Boolean networks},
+  journal   = {IEEE Transactions on Automatic Control},
+  year      = {2010},
+  volume    = {55},
+  number    = {10},
+  pages     = {2251--2258},
+  publisher = {IEEE},
+}
+
+@InCollection{OLEARY1993327,
+  author    = {John O'Leary and Mark Linderman and Miriam Leeser and Mark Aagaard},
+  title     = {HML: A Hardware Description Language Based on Standard ML},
+  booktitle = {Computer Hardware Description Languages and their Applications},
+  publisher = {North-Holland},
+  year      = {1993},
+  editor    = {DAVID AGNEW and LUC CLAESEN and RAUL CAMPOSANO},
+  series    = {IFIP Transactions A: Computer Science and Technology},
+  pages     = {327-334},
+  address   = {Amsterdam},
+  isbn      = {978-0-444-81641-2},
+  abstract  = {Publisher Summary
+This chapter focuses on HML, a functional hardware description language based on the programming language Standard ML. HML is strongly typed, higher-order, and polymorphic, and provides a sophisticated library system. HML is based on state of the art research in programming languages and formal verification; it differs from other hardware description languages in its unusually rich type system, natural and concise descriptions of hardware structures, well defined semantics and proof support. One of the principal goals of HML is to guarantee that any design which type checks can be legally constructed. This consists primarily of ensuring that bus and port types match correctly. HML also extends SML's type system with support for dependent types and parameterized types.},
+  doi       = {https://doi.org/10.1016/B978-0-444-81641-2.50029-0},
+  url       = {https://www.sciencedirect.com/science/article/pii/B9780444816412500290},
+}
+
+@InProceedings{10.1145/3314221.3314625,
+  author    = {Krishnaswami, Neelakantan R. and Yallop, Jeremy},
+  title     = {A Typed, Algebraic Approach to Parsing},
+  booktitle = {Proceedings of the 40th ACM SIGPLAN Conference on Programming Language Design and Implementation},
+  year      = {2019},
+  series    = {PLDI 2019},
+  pages     = {379–393},
+  address   = {New York, NY, USA},
+  publisher = {Association for Computing Machinery},
+  abstract  = {In this paper, we recall the definition of the context-free expressions (or µ-regular expressions), an algebraic presentation of the context-free languages. Then, we define a core type system for the context-free expressions which gives a compositional criterion for identifying those context-free expressions which can be parsed unambiguously by predictive algorithms in the style of recursive descent or LL(1). Next, we show how these typed grammar expressions can be used to derive a parser combinator library which both guarantees linear-time parsing with no backtracking and single-token lookahead, and which respects the natural denotational semantics of context-free expressions. Finally, we show how to exploit the type information to write a staged version of this library, which produces dramatic increases in performance, even outperforming code generated by the standard parser generator tool ocamlyacc.},
+  doi       = {10.1145/3314221.3314625},
+  isbn      = {9781450367127},
+  keywords  = {parsing, context-free languages, Kleene algebra, type theory},
+  location  = {Phoenix, AZ, USA},
+  numpages  = {15},
+  url       = {https://doi.org/10.1145/3314221.3314625},
+}
+
+@Comment{jabref-meta: databaseType:bibtex;}

@@ -1,0 +1,68 @@
+% \documentclass{article}
+% \usepackage{tikz}
+% \usetikzlibrary{automata} % Import library for drawing automata
+% \usetikzlibrary{positioning} % ...positioning nodes
+% \usetikzlibrary{arrows} % ...customizing arrows
+% \usetikzlibrary{shapes.misc}
+% \usetikzlibrary{arrows.meta,
+%                 decorations.markings}
+
+
+
+% \usetikzlibrary{decorations.pathreplacing}
+
+% \begin{document}
+
+\begin{tikzpicture}
+  \node at (0,0) (inp) {(a, b, c)};
+  \coordinate[right of=inp, xshift=1cm] (inp-split);
+  \node[right of=inp-split, xshift=1cm,
+        draw, fill=gray!20, rectangle,
+        minimum width=15mm, minimum height=2cm] (f) {\textbf{f}};
+  \coordinate[right of=f, xshift=1.0cm] (out-join);
+  \node[right of=out-join, xshift=1cm] (out) {(x, y)};
+
+  \draw (inp.east) to[short,i>=\relax,-*] (inp-split);
+  \draw (out-join) to[short,*-]node[currarrow,pos=1]{} (out);
+  \draw (inp-split) -- (inp-split|-f.140) to[short,i>=a] (f.140);
+  \draw (inp-split) -- (inp-split|-f.220) to[short,i>=c] (f.220);
+  \draw (inp-split) to[short,i>=b] (f.west);
+  %
+  \draw (f.30) to[short,i>=x\relax] (f.30-|out-join) -- (out-join);
+  \draw (f.330) to[short,i>=y] (f.330-|out-join) -- (out-join);
+\end{tikzpicture}
+
+
+
+% \begin{tikzpicture}[
+%        ->-/.style = {decoration={markings,
+%                                  mark=at position 0.5 with {\arrow{>}}},
+%                      postaction={decorate}}
+%   ]
+%   \node at (0,0) (inp) {(a, b, c)};
+%   \node[right of=inp, xshift=1cm] (inp-split) {};
+%   \node[right of=inp-split, yshift=0.75cm] (inp-a) {};
+%   \node[right of=inp-split] (inp-b) {};
+%   \node[right of=inp-split, yshift=-0.75cm] (inp-c) {};
+%   \node[right of=inp-b, xshift=-3mm,
+%         draw, fill=gray!20, rectangle,
+%         minimum width=15mm, minimum height=2cm] (f) {\textbf{f}};
+%   \node[right of=inp-b, xshift=0.50cm] (out-b) {};
+%   \node[above of=out-b, yshift=-0.50cm] (out-a) {};
+%   \node[below of=out-b, yshift=0.50cm] (out-c) {};
+%   \node[right of=out-b] (out-join) {};
+%   \node[right of=out-join, xshift=1cm] (out) {(x, y)};
+
+%   \fill (inp-split) circle[radius=1pt];
+%   \fill (out-join) circle[radius=1pt];
+%   \draw[->-] (inp) -- (inp-split);
+%   \draw[->] (inp-split) |- (inp-a);
+%   \draw[->] (inp-split) |- (inp-b);
+%   \draw[->] (inp-split) |- (inp-c);
+%   \draw[->] (out-a) -| (out-join);
+%   %\draw[->-] (out-b) -- (out-join);
+%   \draw[->] (out-c) -| (out-join);
+%   \draw[->-] (out-join) -- (out);
+% \end{tikzpicture}
+
+% \end{document}

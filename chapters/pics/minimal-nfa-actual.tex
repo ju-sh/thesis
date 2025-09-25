@@ -1,0 +1,22 @@
+    \begin{tikzpicture}[
+      node distance=2.5cm, % Minimum distance between two nodes. Change if necessary.
+      every state/.style={ % Sets the properties for each state
+      semithick,
+      fill=gray!10},
+      initial text={}, % No label on start arrow
+      double distance=2pt, % Adjust appearance of accept states
+      every edge/.style={ % Sets the properties for each transition
+      draw,
+      ->,>=stealth', % Makes edges directed with bold arrowheads
+      auto,
+      semithick}
+    ]
+      \node[state, initial] (f1) {};
+      \node[state, right of=f1] (t1) {};
+      \node[state, right of=t1] (f2) {};
+      \node[state, accepting, right of=f2] (t2) {};
+      
+      \draw (f1) edge node {\texttt a} (t1);
+      \draw (t1) edge[bend left, above] node {$\varepsilon$} (f2);
+      \draw (f2) edge node {\texttt b} (t2);
+    \end{tikzpicture}

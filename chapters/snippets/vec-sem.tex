@@ -1,0 +1,16 @@
+{\small
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{Fixpoint} \PY{n}{funcDenote} \PY{o}{\PYZob{}}\PY{n}{A} \PY{o}{:} \PY{k+kt}{Type}\PY{o}{\PYZcb{}} \PY{o}{\PYZob{}}\PY{n}{s} \PY{o}{:} \PY{n}{sort}\PY{o}{\PYZcb{}}
+  \PY{o}{(}\PY{n}{v} \PY{o}{:} \PY{o}{(}\PY{n}{s} \PY{n+nb+bp}{↝} \PY{n}{A}\PY{o}{)}\PY{o}{\PYZpc{}}\PY{n}{func}\PY{o}{)} \PY{o}{(}\PY{n}{t} \PY{o}{:} \PY{n+nb+bp}{⟦}\PY{n}{s}\PY{n+nb+bp}{⟧}\PY{o}{)} \PY{o}{:} \PY{n}{A} \PY{o}{:=}
+  \PY{k}{match} \PY{n}{v} \PY{k}{with}
+  \PY{o}{|} \PY{n}{Zero} \PY{o}{=\PYZgt{}} \PY{k}{fun} \PY{n}{x} \PY{o}{=\PYZgt{}} \PY{k}{match} \PY{n}{x} \PY{k}{with} \PY{k}{end}
+  \PY{o}{|} \PY{n}{One} \PY{n}{k} \PY{o}{=\PYZgt{}} \PY{k}{fun} \PY{n}{x} \PY{o}{=\PYZgt{}} \PY{n}{k}
+  \PY{o}{|} \PY{n}{Add} \PY{n}{f1} \PY{n}{f2} \PY{o}{=\PYZgt{}}
+      \PY{k}{fun} \PY{n}{x} \PY{o}{:} \PY{n+nb+bp}{⟦}\PY{n}{s1} \PY{o}{+} \PY{n}{s2}\PY{n+nb+bp}{⟧} \PY{o}{=\PYZgt{}}
+      \PY{k}{match} \PY{n}{x} \PY{k}{with}
+      \PY{o}{|} \PY{n}{inl} \PY{n}{x\PYZsq{}} \PY{o}{=\PYZgt{}} \PY{n}{funcDenote} \PY{n}{f1} \PY{n}{x\PYZsq{}}
+      \PY{o}{|} \PY{n}{inr} \PY{n}{x\PYZsq{}} \PY{o}{=\PYZgt{}} \PY{n}{funcDenote} \PY{n}{f2} \PY{n}{x\PYZsq{}}
+      \PY{k}{end}
+  \PY{k}{end} \PY{n}{t}\PY{o}{.}
+\end{Verbatim}
+}

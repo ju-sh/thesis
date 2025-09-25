@@ -1,0 +1,26 @@
+% https://tex.stackexchange.com/questions/461790/how-to-create-two-arrow-breaks
+    \begin{tikzpicture}[node distance = 2cm, auto, scale=1.0,
+  block/.style = {
+    rectangle, draw,  
+    text width=7em, text centered, rounded corners, minimum height=2em
+  }, 
+  arrow/.style = {draw, -latex',rounded corners},
+  invisible/.style = {rectangle},
+  circular/.style = {draw, circle, radius=1.0cm}
+    ]
+        \node (r-orig) {\small $r: re\ (\Sigma \to \mathbb{B})$};
+        \node [invisible, below of=r-orig] (split) {};
+        \node [left of=split] (ft) {\small $ft: A \vto (\Sigma \to \mathbb{B})$};
+        \node [right of=split] (rA) {\small $rA: re\ A$};
+        \node [circular, below of=ft] (map) {\small \texttt{map}};
+        \node [left of=map] (inp) {\small $\sigma : \Sigma$};
+        \node [block, below of=rA] (nfa) {\small $n: nfa\ A$};
+        \node [right of=nfa, xshift=1cm] (out) {\small Output};
+
+        \path [arrow] (inp) -- (map) edge node[above] {$A \vto \mathbb{B}$} (nfa);
+        \path [arrow] (ft) -- (map);
+        \path [arrow] (rA) -- (nfa);
+        \path [arrow] (nfa) -- (out);
+        \path [arrow] (r-orig) |- ($(r-orig)+(0,-1)$) -| (ft);
+        \path [arrow] (r-orig) |- ($(r-orig)+(0,-1)$) -|  (rA);
+    \end{tikzpicture}

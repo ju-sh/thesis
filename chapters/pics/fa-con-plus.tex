@@ -1,0 +1,37 @@
+% \documentclass{article}
+% \usepackage{tikz}
+% \usetikzlibrary{automata} % Import library for drawing automata
+% \usetikzlibrary{positioning} % ...positioning nodes
+% \usetikzlibrary{arrows} % ...customizing arrows
+% \usetikzlibrary{shapes.misc}
+% \usetikzlibrary{arrows.meta,
+%                 automata,
+%                 decorations.markings,
+%                 decorations.pathreplacing}
+% \begin{document}
+
+\begin{tikzpicture}[node distance=1.5cm]
+
+  \node[state, initial] (sres00) {};
+  \node (sres02) [right=of sres00, xshift=-1cm] {$\cdots$};
+  \node[state, accepting, right of=sres02] (sres03) {};
+  \draw (sres03) edge[out=270,
+                      in=110,
+                      looseness=1.2,
+                      bend right,
+                      above]
+     node (mid) {$\varepsilon$} (sres00);
+  \draw[->] (sres00) edge node[below] {$\sigma_1$} (sres02);
+  \draw[->] (sres02) edge node[below] {$\sigma_n$} (sres03);
+
+  % Plus
+  \node (s02) [above=of mid, yshift=5mm] {$\cdots$};
+  \node[state, accepting, right of=s02] (s03) {};
+  \node[state, initial, left of=s02] (s00) {};
+  \node[below of=s02,scale=1.5] (eqopfa) {$\Downarrow$};
+
+  \draw[->] (s00) edge node[above] {$\sigma_1$} (s02);
+  \draw[->] (s02) edge node[above] {$\sigma_n$} (s03);
+\end{tikzpicture}
+
+% \end{document}

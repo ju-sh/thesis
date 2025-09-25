@@ -1,0 +1,42 @@
+  \begin{tikzpicture}[
+    node distance=1.5cm, % Minimum distance between two nodes. Change if necessary.
+    every state/.style={ % Sets the properties for each state
+    semithick,
+    fill=gray!10},
+    initial text={}, % No label on start arrow
+    double distance=2pt, % Adjust appearance of accept states
+    every edge/.style={ % Sets the properties for each transition
+    draw,
+    ->,>=stealth', % Makes edges directed with bold arrowheads
+    auto,
+    semithick}
+  ]
+    % Alt
+    \node[state, initial] (s0) {s0};
+  
+    \node[state, initial, right of=s0, yshift=1.5cm] (s00) {s00};
+    \node[state, right of=s00] (s01) {s01};
+    \node (dots02) [right=of s01, xshift=-1cm] {$\cdots$};
+    \node[state, accepting, right of=dots02] (s03) {s03};
+  
+    \node[state, initial, right of=s0, yshift=-1.5cm] (s10) {s10};
+    \node[state, right of=s10] (s11) {s11};
+    \node (dots12) [right=of s11, xshift=-1cm] {$\cdots$};
+    \node[state, accepting, right of=dots12] (s13) {s13};
+  
+    \node[state, accepting, right of=s03, yshift=-1.5cm] (s1) {s1};
+  
+    \draw (s00) edge node {$\sigma$} (s01);
+    \draw (s01) edge node {$\sigma$} (dots02);
+    \draw (dots02) edge node {$\sigma$} (s03);
+  
+    \draw (s10) edge node {$\sigma$} (s11);
+    \draw (s11) edge node {$\sigma$} (dots12);
+    \draw (dots12) edge node {$\sigma$} (s13);
+  
+    \draw (s0) edge node {$\varepsilon$} (s00);
+    \draw (s0) edge node {$\varepsilon$} (s10);
+    \draw (s03) edge node {$\varepsilon$} (s1);
+    \draw (s13) edge node {$\varepsilon$} (s1);
+  
+  \end{tikzpicture}

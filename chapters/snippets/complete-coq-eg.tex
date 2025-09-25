@@ -1,0 +1,19 @@
+{\scriptsize
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{From} \PY{n}{courant} \PY{k+kn}{Require} \PY{k+kn}{Import} \PY{n}{prelude}\PY{o}{.}
+
+\PY{k+kn}{Example} \PY{n}{rf} \PY{o}{:=} \PY{n}{re.Atom} \PY{o}{(}\PY{n}{Bool.eqb} \PY{n+nb+bp}{true}\PY{o}{)}\PY{o}{.}
+\PY{k+kn}{Example} \PY{n}{rA} \PY{o}{:=} \PY{n}{reΣ2A} \PY{n}{rf}\PY{o}{.}
+\PY{k+kn}{Example} \PY{n}{n} \PY{o}{:=} \PY{n}{of\PYZus{}re} \PY{n}{rA}\PY{o}{.}
+
+\PY{k+kn}{Example} \PY{n}{ft} \PY{o}{:=} \PY{k+kn}{Eval} \PY{k}{compute} \PY{k}{in} \PY{n}{driver.f2v1} \PY{o}{(}\PY{n}{reΣ2ft} \PY{n}{rf}\PY{o}{)}\PY{o}{.}
+\PY{k+kn}{Example} \PY{n}{strt} \PY{o}{:=} \PY{k+kn}{Eval} \PY{k}{compute} \PY{k}{in} \PY{n}{driver.f2v1} \PY{o}{(}\PY{n}{start} \PY{n}{n}\PY{o}{)}\PY{o}{.}
+\PY{k+kn}{Example} \PY{n}{finl} \PY{o}{:=} \PY{k+kn}{Eval} \PY{k}{compute} \PY{k}{in} \PY{n}{driver.f2v1} \PY{o}{(}\PY{n}{final} \PY{n}{n}\PY{o}{)}\PY{o}{.}
+\PY{k+kn}{Example} \PY{n}{tf} \PY{o}{:=} \PY{k+kn}{Eval} \PY{k}{compute} \PY{k}{in} \PY{n}{driver.f2v3} \PY{o}{(}\PY{n}{trans} \PY{n}{n}\PY{o}{)}\PY{o}{.}
+
+\PY{n}{Extraction} \PY{n}{strt}\PY{o}{.}
+\PY{n}{Extraction} \PY{n}{finl}\PY{o}{.}
+\PY{n}{Extraction} \PY{n}{tf}\PY{o}{.}
+\PY{n}{Extraction} \PY{n}{ft}\PY{o}{.}
+\end{Verbatim}
+}

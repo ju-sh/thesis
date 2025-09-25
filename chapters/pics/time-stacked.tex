@@ -1,0 +1,58 @@
+% % P103 of revision 2021-05-15
+
+% \documentclass{article}
+% \usepackage{pgfplots}
+% \pgfplotsset{compat=1.5}
+% \begin{document}
+
+\begin{tikzpicture}
+\begin{axis}[
+  ymin=0,
+  minor tick num=4,
+  enlarge x limits=false,
+  const plot,
+  axis on top,
+  stack plots=y,
+  % every axis plot/.append style={fill,fill opacity=0.5},
+  cycle list={
+  % {blue!70!black,fill=blue},
+  % {blue!60!white,fill=blue!30!white},
+  {draw=none,fill={rgb:red,138;green,82;blue,232}},
+  % {red,thick}
+  },
+  xlabel={Regex size},
+  ylabel={Time},
+    legend pos=north west,
+  legend style={
+  area legend,
+  % at={(0.5,-0.15)},
+  % anchor=north,
+  legend columns=1},
+  % legend entries={Extraction, Build, HDL gen, Synthesis},
+] 
+  \addplot [draw=blue,fill=gray!30!white]
+     table [x=size,y=extr]
+     from {chapters/data/time-data/time-collection.dat}
+    \closedcycle;
+  \addplot [draw=blue,fill=teal!30!white]
+     table [x=size,y=build]
+     from {chapters/data/time-data/time-collection.dat}
+    \closedcycle;
+  \addplot [draw=blue,fill=blue!30!white]
+     table [x=size,y=hdl]
+     from {chapters/data/time-data/time-collection.dat}
+    \closedcycle;
+  \addplot [draw=blue,fill=orange!30!white]
+     table [x=size,y=synth]
+     from {chapters/data/time-data/time-collection.dat}
+    \closedcycle;
+  \addplot+ [stack plots=false] %, draw=blue,fill=blue!30!white]
+     table [x=size,y=total]
+     from {chapters/data/time-data/time-collection.dat}
+    \closedcycle;
+  \legend{Extraction,Build,HDL gen,Synthesis}
+
+\end{axis}
+\end{tikzpicture}
+
+% \end{document}

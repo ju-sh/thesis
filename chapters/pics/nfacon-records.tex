@@ -1,0 +1,164 @@
+\begin{figure}
+\begin{minipage}{0.4\textwidth}
+% \vspace{3em}
+\begin{subfigure}{1.0\textwidth}
+  \centering
+% \begin{verbatim}
+% eps := {|
+%    start := singleton tt;
+%    final := singleton tt;
+%    trans q i := empty _
+% |}
+% \end{verbatim}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{Definition} \PY{n}{eps} \PY{o}{:=} \PY{o}{\PYZob{}|}
+   \PY{n}{start} \PY{o}{:=} \PY{n}{singleton} \PY{n}{tt}\PY{o}{;}
+   \PY{n}{final} \PY{o}{:=} \PY{n}{singleton} \PY{n}{tt}\PY{o}{;}
+   \PY{n}{trans} \PY{n}{q} \PY{n}{i} \PY{o}{:=} \PY{n}{empty} \PY{o}{\PYZus{}}
+\PY{o}{|\PYZcb{}}
+\end{Verbatim}
+\caption{Eps}
+\vspace{3em}
+\end{subfigure}
+%
+\begin{subfigure}[c]{1.0\textwidth}
+  \centering
+% \begin{verbatim}
+% atom f := {|
+%    start := singleton (inl tt);
+%    final := singleton (inr tt);
+%    trans q i :=
+%      match q with
+%      | inl _ => 
+%          if f i then
+%            singleton (inr tt)
+%          else
+%            empty _
+%      | _ => empty _
+%      end
+% |}
+% \end{verbatim}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{Definition} \PY{n}{atom} \PY{n}{f} \PY{o}{:=} \PY{o}{\PYZob{}|}
+   \PY{n}{start} \PY{o}{:=} \PY{n}{singleton} \PY{o}{(}\PY{n}{inl} \PY{n}{tt}\PY{o}{)}\PY{o}{;}
+   \PY{n}{final} \PY{o}{:=} \PY{n}{singleton} \PY{o}{(}\PY{n}{inr} \PY{n}{tt}\PY{o}{)}\PY{o}{;}
+   \PY{n}{trans} \PY{n}{q} \PY{n}{i} \PY{o}{:=}
+     \PY{k}{match} \PY{n}{q} \PY{k}{with}
+     \PY{o}{|} \PY{n}{inl} \PY{o}{\PYZus{}} \PY{o}{=\PYZgt{}}
+         \PY{k}{if} \PY{n}{f} \PY{n}{i} \PY{k}{then}
+           \PY{n}{singleton} \PY{o}{(}\PY{n}{inr} \PY{n}{tt}\PY{o}{)}
+         \PY{k}{else} \PY{n}{empty} \PY{o}{\PYZus{}}
+     \PY{o}{|} \PY{o}{\PYZus{}} \PY{o}{=\PYZgt{}} \PY{n}{empty} \PY{o}{\PYZus{}}
+     \PY{k}{end}
+\PY{o}{|\PYZcb{}}
+\end{Verbatim}
+\caption{Atom}
+\vspace{3em}
+\end{subfigure}
+%
+\begin{subfigure}{1.0\textwidth}
+  \centering
+% \begin{verbatim}
+% plus n := {|
+%    start := (start n);
+%    final := (final n);
+%    trans q i :=
+%      let q' := (trans n) q i in
+%      if intersection q' (final n)
+%        union q' (start n)
+%      else q'
+% |}
+% \end{verbatim}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{Definition} \PY{n}{plus} \PY{n}{n} \PY{o}{:=} \PY{o}{\PYZob{}|}
+   \PY{n}{start} \PY{o}{:=} \PY{o}{(}\PY{n}{start} \PY{n}{n}\PY{o}{)}\PY{o}{;}
+   \PY{n}{final} \PY{o}{:=} \PY{o}{(}\PY{n}{final} \PY{n}{n}\PY{o}{)}\PY{o}{;}
+   \PY{n}{trans} \PY{n}{q} \PY{n}{i} \PY{o}{:=}
+     \PY{k}{let} \PY{n}{q\PYZsq{}} \PY{o}{:=} \PY{o}{(}\PY{n}{trans} \PY{n}{n}\PY{o}{)} \PY{n}{q} \PY{n}{i} \PY{k}{in}
+     \PY{k}{if} \PY{n}{intersection} \PY{n}{q\PYZsq{}} \PY{o}{(}\PY{n}{final} \PY{n}{n}\PY{o}{)}
+       \PY{n}{union} \PY{n}{q\PYZsq{}} \PY{o}{(}\PY{n}{start} \PY{n}{n}\PY{o}{)}
+     \PY{k}{else} \PY{n}{q\PYZsq{}}
+\PY{o}{|\PYZcb{}}
+\end{Verbatim}
+\caption{Plus}
+\end{subfigure}
+\end{minipage}
+%
+\hspace{3em}
+\begin{minipage}{0.6\textwidth}
+%
+\begin{subfigure}{1.0\textwidth}
+  \centering
+% \begin{verbatim}
+% cat n1 n2 := {|
+%    start := union (map inl (start n1))
+%       (empty _);
+%    final := union (empty _)
+%       (map inr (final n2));
+%    trans q i :=
+%      match q with
+%      | inl q1 =>
+%          let q1' := (trans n1) q1 i in
+%          if intersection q1' (final n1)
+%            union q1' (start n2)
+%          else q1'
+%      | inl q2 => (trans n2) q2 i
+%      end
+% |}
+% \end{verbatim}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{Definition} \PY{n}{cat} \PY{n}{n1} \PY{n}{n2} \PY{o}{:=} \PY{o}{\PYZob{}|}
+   \PY{n}{start} \PY{o}{:=} \PY{n}{union} \PY{o}{(}\PY{n}{map} \PY{n}{inl} \PY{o}{(}\PY{n}{start} \PY{n}{n1}\PY{o}{)}\PY{o}{)}
+      \PY{o}{(}\PY{n}{empty} \PY{o}{\PYZus{}}\PY{o}{)}\PY{o}{;}
+   \PY{n}{final} \PY{o}{:=} \PY{n}{union} \PY{o}{(}\PY{n}{empty} \PY{o}{\PYZus{}}\PY{o}{)}
+      \PY{o}{(}\PY{n}{map} \PY{n}{inr} \PY{o}{(}\PY{n}{final} \PY{n}{n2}\PY{o}{)}\PY{o}{)}\PY{o}{;}
+   \PY{n}{trans} \PY{n}{q} \PY{n}{i} \PY{o}{:=}
+     \PY{k}{match} \PY{n}{q} \PY{k}{with}
+     \PY{o}{|} \PY{n}{inl} \PY{n}{q1} \PY{o}{=\PYZgt{}}
+         \PY{k}{let} \PY{n}{q1\PYZsq{}} \PY{o}{:=} \PY{o}{(}\PY{n}{trans} \PY{n}{n1}\PY{o}{)} \PY{n}{q1} \PY{n}{i} \PY{k}{in}
+         \PY{k}{if} \PY{n}{intersection} \PY{n}{q1\PYZsq{}} \PY{o}{(}\PY{n}{final} \PY{n}{n1}\PY{o}{)}
+           \PY{n}{union} \PY{n}{q1\PYZsq{}} \PY{o}{(}\PY{n}{start} \PY{n}{n2}\PY{o}{)}
+         \PY{k}{else} \PY{n}{q1\PYZsq{}}
+     \PY{o}{|} \PY{n}{inl} \PY{n}{q2} \PY{o}{=\PYZgt{}} \PY{o}{(}\PY{n}{trans} \PY{n}{n2}\PY{o}{)} \PY{n}{q2} \PY{n}{i}
+     \PY{k}{end}
+\PY{o}{|\PYZcb{}}
+\end{Verbatim}
+\caption{Cat}
+\vspace{3em}
+\end{subfigure}
+%
+\begin{subfigure}{1.0\textwidth}
+  \centering
+% \begin{verbatim}
+% alt n1 n2 := {|
+%    start := union (map inl (start n1))
+%                   (map inr (start n2));
+%    final := union (map inl (final n1))
+%                   (map inr (final n2));
+%    trans q i :=
+%      match q with
+%      | inl q => (trans n1) q i
+%      | inr q => (trans n2) q i
+%      end
+% |}
+% \end{verbatim}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{Definition} \PY{n}{alt} \PY{n}{n1} \PY{n}{n2} \PY{o}{:=} \PY{o}{\PYZob{}|}
+   \PY{n}{start} \PY{o}{:=} \PY{n}{union} \PY{o}{(}\PY{n}{map} \PY{n}{inl} \PY{o}{(}\PY{n}{start} \PY{n}{n1}\PY{o}{)}\PY{o}{)}
+                  \PY{o}{(}\PY{n}{map} \PY{n}{inr} \PY{o}{(}\PY{n}{start} \PY{n}{n2}\PY{o}{)}\PY{o}{)}\PY{o}{;}
+   \PY{n}{final} \PY{o}{:=} \PY{n}{union} \PY{o}{(}\PY{n}{map} \PY{n}{inl} \PY{o}{(}\PY{n}{final} \PY{n}{n1}\PY{o}{)}\PY{o}{)}
+                  \PY{o}{(}\PY{n}{map} \PY{n}{inr} \PY{o}{(}\PY{n}{final} \PY{n}{n2}\PY{o}{)}\PY{o}{)}\PY{o}{;}
+   \PY{n}{trans} \PY{n}{q} \PY{n}{i} \PY{o}{:=}
+     \PY{k}{match} \PY{n}{q} \PY{k}{with}
+     \PY{o}{|} \PY{n}{inl} \PY{n}{q} \PY{o}{=\PYZgt{}} \PY{o}{(}\PY{n}{trans} \PY{n}{n1}\PY{o}{)} \PY{n}{q} \PY{n}{i}
+     \PY{o}{|} \PY{n}{inr} \PY{n}{q} \PY{o}{=\PYZgt{}} \PY{o}{(}\PY{n}{trans} \PY{n}{n2}\PY{o}{)} \PY{n}{q} \PY{n}{i}
+     \PY{k}{end}
+\PY{o}{|\PYZcb{}}
+\end{Verbatim}
+\caption{Alt}
+\end{subfigure}
+\end{minipage}
+%
+\caption{Construction \code{nfa} values with Thompson's algorithm}
+\label{fig:nfacon-nfa-vals}
+\end{figure}

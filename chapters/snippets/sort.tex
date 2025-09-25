@@ -1,0 +1,10 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{Inductive} \PY{n}{sort} \PY{o}{:} \PY{k+kt}{Type} \PY{o}{:=}
+\PY{o}{|} \PY{n}{Zero} \PY{o}{:} \PY{n}{sort}
+\PY{o}{|} \PY{n}{One} \PY{o}{:} \PY{n}{sort}
+\PY{o}{|} \PY{n}{Add} \PY{o}{:} \PY{n}{sort} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{sort} \PY{o}{\PYZhy{}\PYZgt{}} \PY{n}{sort}\PY{o}{.}
+
+\PY{k+kn}{Notation} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{0}\PY{l+s+s2}{\PYZdq{}} \PY{o}{:=} \PY{n}{Zero} \PY{o}{:} \PY{n}{sort\PYZus{}scope}\PY{o}{.}
+\PY{k+kn}{Notation} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{1}\PY{l+s+s2}{\PYZdq{}} \PY{o}{:=} \PY{n}{One} \PY{o}{:} \PY{n}{sort\PYZus{}scope}\PY{o}{.}
+\PY{n}{Infix} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{+}\PY{l+s+s2}{\PYZdq{}} \PY{o}{:=} \PY{n}{Add} \PY{o}{:} \PY{n}{sort\PYZus{}scope}\PY{o}{.}
+\end{Verbatim}

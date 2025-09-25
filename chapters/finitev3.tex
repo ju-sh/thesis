@@ -1,0 +1,1194 @@
+\chapter{Matching regular expressions} \label{ch:method}
+In this chapter, we describe how \glspl{rgx} and \glspl{NFA} are
+represented in Coq.
+The finite automata that we saw in Chapter~\ref{ch:prelims} are
+defined in terms of finite sets.
+The finiteness of the state space of the automata is a crucial factor
+in automata theory that makes algorithms like subset
+construction~\cite{rabin1959finite} possible.
+This chapter also describes our formalization of finite sets and how
+operations on finite sets are used to build \glspl{NFA} corresponding
+to a given \gls{rgx} within Coq.
+
+\section{Representing regular expressions}
+We represent \glspl{rgx} in Coq using the \code{re T} type
+(Fig.~\ref{code:re-syntax}).
+This type corresponds to the grammar shown in
+Fig.~\ref{gram:classic-re-syntax}.
+The \code{re T} is a polymorphic type where \code{T} is a type variable
+that can be instantiated to any type.
+We represent our generalized \glspl{rgx} matching words over an alphabet
+$\Sigma$ using values of the type \code{re (Σ → \bbool)}.
+%
+% We represent \glspl{rgx} matching words over an alphabet $\Sigma$ as
+% values of a type \code{re (Σ → \bbool)} in Coq.
+% This type is made by instantiating the type parameter of the
+% polymorphic type \code{re} with the type of Boolean functions from the
+% input alphabet (Fig.~\ref{code:re-syntax}).
+
+We formally specify when a regex r matches a word w, denoted by $w
+\models r$, using the rules shown in Fig.~\ref{gram:re-sem-rules}.
+In Coq, these inductive rules can be captured using a propositional
+type \code{sem r w} as shown in Fig.~\ref{code:re-sem}.
+% We use the notation $w \models r$ to denote that the \gls{rgx} $r$
+% matches a word $w$.
+% % The rules of \gls{rgx} matching is shown in Fig.~\ref{gram:re-sem-rules}.
+% A \gls{rgx} $r$ is said to match a word $w$ if a $w \models r$ can be
+% derived from the rules of \gls{rgx} matching show in  
+% % The semantics of \gls{rgx} matching is given as per the rules in
+% Fig.~\ref{gram:re-sem-rules}.
+% We represent these rules as an inductive type named $sem$ in Coq
+% (Fig.~\ref{code:re-sem}).
+% % A \gls{rgx} $r$ is said to match a word $w$ if $w \models r$ can be
+% % derived as per these rules.
+% % We represent the semantics of regular expression matching in Coq as a
+% % propositional type \code{sem} (Fig.~\ref{code:re-sem}).
+% % The constructors of this type correspond to the rules shown in
+% % Fig.~\ref{gram:re-sem-rules}.
+For better readability, we use the Coq notation \code{w\;\cmodels \;r}
+to represent the type \code{sem r w}.
+A value of type \code{w\;\cmodels \;r} corresponds to a derivation
+demonstrating how the \gls{rgx} \code{r} matched the word \code{w}.
+
+\begin{figure}
+  \hfill%
+  \begin{minipage}{0.7\textwidth}%
+  \input{chapters/snippets/re-type.tex}
+  \end{minipage}%
+  \hfill%
+  \caption{Coq type of regex}
+  \label{code:re-syntax}
+\end{figure}
+
+\begin{figure}
+\begin{mathpar}
+  \inferrule*[right=SEps]
+    { }
+    {[] \models \varepsilon}
+
+  \inferrule*[right=SAtom]
+    {f: T \to \mathbb{B} \\ c: T \\ f \ c = True}
+    {[c] \models Atom \ f}
+
+  \inferrule*[right=SCat]
+    {w_1 \models r_1 \\ w_2 \models r_2}
+    {w_1 w_2 \models r_1;r_2}
+
+  \inferrule*[right=SAltL]
+    {w \models r_1}
+    {w \models r_1|r_2}
+
+  \inferrule*[right=SAltR]
+    {w \models r_2}
+    {w \models r_1|r_2}
+
+  \inferrule*[right=SPlusD]
+    {w \models r}
+    {w \models r^+}
+
+  \inferrule*[right=SPlusM]
+    {w_1 \models r \\ w_2 \models r^+}
+    {w_1 w_2 \models r^+}
+\end{mathpar}
+\caption{Rules of regex matching}
+\label{gram:re-sem-rules}
+\end{figure}
+
+\begin{figure}
+  \input{chapters/snippets/re-sem-type.tex}
+\caption{Regex semantics as Coq type}
+\label{code:re-sem}
+\end{figure}
+
+\subsection*{Utility of tests as atoms}
+% The \glspl{rgx} that we deal with in this work are a generalized form
+% for classic \gls{rgx}.
+% This is because the atoms of our \glspl{rgx} have Boolean functions on
+% input as atoms instead of specific input symbols.
+The \glspl{rgx} that we consider in this thesis are a generalized form
+of \glspl{rgx}.
+Such \glspl{rgx} have many advantages over classic \glspl{rgx}.
+%
+For instance, the generality of the \glspl{rgx} that we consider allows
+for a more succinct representation.
+It is possible to merge atoms which would be distinct in classic
+\gls{rgx} into a single atom in our \gls{rgx}.
+Lesser number of atoms in the input \gls{rgx} means lesser number of
+states in the matcher automata and thereby lower resource
+utilization in the corresponding hardware implementation.
+%
+Consider the example shown in Fig~\ref{fig:state-count}.
+Here, three states (corresponding to $x$, $y$ and $z$) can be merged
+into a single state when a boolean test (\code{isin [x, y, z]}) is
+used.
+This is especially useful while implementing character classes in
+\glspl{rgx}.
+
+Although regular languages are closed under complementation and
+intersection, construction of corresponding automata is difficult.
+However, these operations are relatively easy to implement when
+restricted to the atom level for the \glspl{NFA} that we construct.
+This is because of the atoms of the \gls{rgx} that we consider being
+Boolean functions.
+%
+% Operations like complementation and intersection of \gls{rgx}
+% are difficult to attain without a state space explosion in the
+% corresponding finite automata.
+% But a form of these operations are achievable in the \gls{rgx}
+% that we consider if the complementation and intersection are limited
+% as atom-wise operations.
+% Another point worth mention is that the atom-wise complement
+% operation is quite easy to implement when the atoms are Boolean
+% tests.
+For example, complementation operation is just a matter of applying
+Boolean negation to the test associated with the atom.
+% For example, the test associated with an atom matching all numbers
+% except 3 and 5 can be written as
+% \code{fun n : nat => negb ((n=?3) || (n=?5))}.
+We chose to consider \gls{rgx} with Boolean tests as atoms to be in
+line with the \glspl{SERE} of \gls{PSL}.
+
+\begin{figure}
+  \centering
+  \begin{subfigure}{0.5\textwidth}
+      \centering
+      \input{chapters/pics/state-count-re.tex}
+      \caption{Classic regex}
+      \label{fig:state-count-re}
+  \end{subfigure}
+  %\vspace{5em}
+  \par\bigskip
+  \begin{subfigure}{0.5\textwidth}
+      \centering
+      \input{chapters/pics/state-count-taa.tex}
+      \caption{\Gls{rgx}}
+      \label{fig:state-count-taa}
+  \end{subfigure}
+  \caption{Difference in state count for $a;(x|y|z);b$ when atoms are tests}
+  \label{fig:state-count}
+\end{figure}
+
+\subsection{Use of $r^+$ instead of $r^*$}
+Classic definition of \glspl{rgx} as shown in
+Fig.~\ref{gram:classic-re-syntax} uses $r^*$ as a constructor.
+Instead, we chose to have $r^+$ as a basic operation, with $r^*$
+implemented as a derived operation ($r^+|\varepsilon$) in terms of
+$r^+$.
+We made this choice to reduce the number of states in the \glspl{NFA}
+corresponding to the input \glspl{rgx}.
+%
+\gls{NFA} construction for $n^*$ involves adding an extra state to the
+\gls{NFA} for $n$.
+Whereas the \gls{NFA} for $n^+$ does not lead to an increase in number
+of states.
+This fact is illustrated by examples shown in Figures~\ref{fig:nfa1}
+and \ref{fig:nfa4}.
+% %
+% A general way of constructing an \gls{NFA} $n^*$ from a given
+% \gls{NFA} $n$ consists of adding a new state which leads to an
+% increase in the size of type representing the state space.
+% %
+% On the other hand, a general construction of $n^+$ can be made without
+% adding extra states.
+% Examples of this approach are shown in
+% Fig.~\ref{fig:nfa-star-correct-correct} and
+% Fig.~\ref{fig:nfa4-star-correct}.
+% Observe that the \glspl{NFA} in these figures are made up of
+% components corresponding to the \glspl{NFA} for $\varepsilon$ and the
+% base \gls{NFA} itself.
+% %
+% For a given \gls{NFA} $n$, we might as well construct $n^+$ and define
+% $n^*$ in terms of $n^+$ instead.
+% For example, Fig.~\ref{fig:nfa4-plus-short} shows the automata for an
+% $r^+$ when $Plus$ is used as a base operation instead of $Star$.
+% Fig.~\ref{fig:nfa4-plus-long} shows an automata accepting the same
+% language $L(r^+)$ but made as an automata for $r;r^*$.
+% %
+% The latter automata has lesser number of states.
+% It is clear that the overall number of states in the automata can be
+% reduced if $Plus$ is used as a base operation with $Star$ made as a
+% derived operation in terms of $Plus$.
+
+\begin{figure}
+  \begin{subfigure}{1.0\linewidth}
+    \centering
+\begin{tikzpicture}[node distance=2.5cm]
+\node[state, initial] (a) {A}; 
+\node[state, accepting, right of=a] (b) {B}; 
+\draw[->] (a) edge node[above] {$a$} (b);
+\end{tikzpicture}
+\caption{$L(N) = L(r)$}
+\label{fig:nfa1-orig}
+  \end{subfigure}
+  \begin{subfigure}{0.5\linewidth}
+    \centering
+\begin{tikzpicture}[node distance=2.5cm]
+\node[state, initial] (a) {A}; 
+\node[state, accepting, right of=a] (b) {B}; 
+\draw[->] (a) edge node[above] {$a$} (b);
+\draw[->] (b) edge[bend left] node[below] {$\varepsilon$} (a);
+\end{tikzpicture}
+\caption{$L(N^+) = L(r^+)$}
+\label{fig:nfa-star-wrong-correct}
+  \end{subfigure}
+\hfill
+  \begin{subfigure}{0.5\linewidth}
+    \centering
+\begin{tikzpicture}[node distance=2.5cm]
+  \node[state] (a) {A}; 
+  \node[state, right of=a] (b) {B}; 
+  \node[initial, accepting, state, left of=a, xshift=0mm] (s) {S}; 
+  \draw[->] (s) edge node[above] {$\varepsilon$} (a);
+  \draw[->] (a) edge node[above] {$a$} (b);
+  \draw[->] (b) edge[bend left] node[below] {$\varepsilon$} (s);
+\end{tikzpicture}
+\caption{$L(N^*) = L(r^*)$}
+\label{fig:nfa-star-correct-correct}
+  \end{subfigure}
+\caption{NFAs based on $r = a$}
+\label{fig:nfa1}
+\end{figure}
+
+\begin{figure}
+    \centering
+  \begin{subfigure}{0.5\linewidth}
+    \centering
+\begin{tikzpicture}[node distance=2.5cm]
+  \node[state, initial] (a) {A}; 
+  \node[state, right of=a] (b) {B}; 
+  \node[state, accepting, right of=b] (c) {C}; 
+  \draw[->] (a) edge[bend left] node[above] {$a$} (b);
+  \draw[->] (b) edge[bend left] node[below] {$b$} (a);
+  \draw[->] (b) edge node[above] {$c$} (c);
+\end{tikzpicture}
+\caption{$L(N) = L(r)$}
+\label{fig:nfa4-orig}
+  \end{subfigure}
+%   \begin{subfigure}{0.5\linewidth}
+%     \centering
+% \begin{tikzpicture}[node distance=2.5cm]
+% \node[state, accepting, initial] (a) {A}; 
+% \node[state, right of=a] (b) {B}; 
+% \node[state, right of=b] (c) {C}; 
+% \draw[->] (a) edge[bend left] node[above] {$a$} (b);
+% \draw[->] (b) edge[bend left] node[below] {$b$} (a);
+% \draw[->] (b) edge node[above] {$c$} (c);
+% \draw[->] (c.50) edge[out=70, in=110, looseness=0.8] node[below] {$\varepsilon$} (a.130);
+% \end{tikzpicture}
+% \caption{$L(N') \neq L(r^*)$}
+% \label{fig:nfa-star-wrong-wrong}
+%   \end{subfigure}
+%
+  \begin{subfigure}{0.5\linewidth}
+    \centering
+\begin{tikzpicture}[node distance=2.5cm]
+  \node[state] (a) {A}; 
+  \node[state, right of=a] (b) {B}; 
+  \node[state, right of=b] (c) {C}; 
+  \node[state, accepting, initial, left of=a] (s) {S}; 
+  \draw[->] (a) edge[bend left] node[above] {$a$} (b);
+  \draw[->] (b) edge[bend left] node[below] {$b$} (a);
+  \draw[->] (b) edge node[above] {$c$} (c);
+  \draw[->] (s) edge node[below] {$\varepsilon$} (a);
+  \draw[->] (c) edge[bend left] node[below] {$\varepsilon$} (s);
+\end{tikzpicture}
+\caption{$L(N^*)$}
+\label{fig:nfa4-star-correct}
+  \end{subfigure}
+%
+  \begin{subfigure}{0.5\linewidth}
+    \centering
+\begin{tikzpicture}[%
+  node distance=2.5cm,
+  decoration={
+    markings,
+    mark=at position 0.5 with {\arrow{>}}
+ }
+]
+  \node[state, initial] (a) {A}; 
+  \node[state, right of=a] (b) {B}; 
+  \node[state, accepting, right of=b] (c) {C}; 
+  \draw[->] (a) edge[bend left] node[above] {$a$} (b);
+  \draw[->] (b) edge[bend left] node[above] {$b$} (a);
+  \draw[->] (b) edge node[above] {$c$} (c);
+  \draw[->]
+  %\draw[postaction={decorate}]
+    (c) edge[bend left] node[below] {$\varepsilon$} (a);
+\end{tikzpicture}
+\caption{$L(N^+) = L(r^+)$}
+\label{fig:nfa4-plus-short}
+  \end{subfigure}
+%
+  \begin{subfigure}{0.5\linewidth}
+    \centering
+\begin{tikzpicture}[%
+  node distance=2.5cm,
+  decoration={
+    markings,
+    mark=at position 0.5 with {\arrow{>}}
+ }
+]
+  \node[state, initial] (a0) {A}; 
+  \node[state, right of=a0] (b0) {B}; 
+  \node[state, accepting, right of=b0] (c0) {C}; 
+  \draw[->] (a0) edge[bend left] node[above] {$a$} (b0);
+  \draw[->] (b0) edge[bend left] node[below] {$b$} (a0);
+  \draw[->] (b0) edge node[above] {$c$} (c0);
+
+  \node[state, below of=a0] (a) {A}; 
+  \node[state, right of=a] (b) {B}; 
+  \node[state, accepting, right of=b] (c) {C}; 
+  \node[state, left of=a] (s) {S}; 
+  \draw[->] (a) edge[bend left] node[below] {$a$} (b);
+  \draw[->] (b) edge[bend left] node[below] {$b$} (a);
+  \draw[->] (b) edge node[above] {$c$} (c);
+  \draw[->] (s) edge node[below] {$\varepsilon$} (a);
+  \draw[->] (c) edge[bend left] node[below] {$\varepsilon$} (s);
+
+  \draw[postaction={decorate}]
+     (c0) .. controls +(-1.5cm,-2.0cm)
+          .. +(-3.5cm, -1.5cm) node[above] {$\varepsilon$}
+          .. controls +(-2.0cm,0.5cm) and +(0.5cm, 1.0cm)
+          .. +(-7.5cm, -2.02cm)
+     (s);
+\end{tikzpicture}
+\caption{$L(N^+) = L(r;r^*)$}
+\label{fig:nfa4-plus-long}
+  \end{subfigure}
+\caption{NFAs based on $r = (ab)^*ac$}
+\label{fig:nfa4}
+\end{figure}
+
+\subsection{eDSL}
+% The input to our workflow are values of the \code{re (Σ → \bbool)}
+% type.
+Manually writing the Coq terms corresponding to values of the type
+\code{re (Σ → \bbool)} is tedious and error-prone due to their
+verbosity.
+Hence, we provide a light-weight \gls{eDSL} which offers a 
+convenient syntax with which \glspl{rgx} may be written within Coq
+(Table~\ref{tab:edsl-constructors}).
+This \gls{eDSL} is made using Coq's notation mechanism which lets us
+customize the default parsing of Coq.
+Constructions from Gallina can also be used as needed while using this
+\gls{eDSL}.
+An example of an \gls{rgx} in Coq written using our \gls{eDSL} is
+shown in Fig.~\ref{code:edsl-eg}.
+Expressions written in our \gls{eDSL} are enclosed between \code{<\{}
+and \code{\}>} to distinguish it from normal Gallina code.
+Note how the \code{let} expressions of Gallina is used together with
+the \gls{eDSL} constructs to build Coq terms.
+
+\begin{figure}
+  \begin{subfigure}{0.5\linewidth}
+\begin{mathpar}
+\begin{array}{ll}
+\toprule
+  \text{eDSL} & \text{Coq term}          \\
+\midrule
+  e           & \text{$Eps$}             \\
+  \#a         & \text{$Atom$ $a$}        \\
+  r_1;r_2     & \text{$Cat$ $r_1$ $r_2$} \\
+  r_1|r_2     & \text{$Alt$ $r_1$ $r_2$} \\
+  r+          & \text{$Plus$ $r$}        \\
+\bottomrule
+\end{array}
+\end{mathpar}
+\caption{Base operations}
+\label{tab:edsl-base}
+\end{subfigure}
+  \hfill
+    \begin{subfigure}{0.5\linewidth}%
+      \begin{mathpar}%
+        \begin{array}{ll}
+          \toprule
+          \text{eDSL} & \text{Meaning}                       \\
+          \midrule
+          r*         & \varepsilon│r^+                      \\
+          r?          & \varepsilon│r                        \\
+          r\{n,m\}    & \text{Match $r$, $n$ to $m$ times}   \\
+          r\{,m\}     & \text{Match $r$, at most $m$ times}  \\
+          r\{n,\}     & \text{Match $r$, at least $n$ times} \\
+          r\{n\}      & \text{Match $r$, exactly $n$ times}  \\
+          \bottomrule
+        \end{array}%
+      \end{mathpar}%
+      \label{tab:edsl-derived}
+      \caption{Derived operations}
+    \end{subfigure}
+\caption{eDSL syntax for \code{re} constructors}
+\label{tab:edsl-constructors}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \begin{subfigure}{0.5\linewidth}
+  \centering
+% Cat (Cat (Alt Eps
+%   (Plus (Atom (fun '(r, o, a) =>
+%      andb r (negb o)))))
+%   (Atom (fun '(r, o, a) => andb r o)))
+%   (Atom (fun '(r, o, a) => a))
+\begin{verbatim}
+Cat (Alt Eps (Atom (fun v => 5 <=? v)))
+    ((Cat
+     (Alt (Atom (fun v => 5 <=? v))
+          (Atom (fun v => v <? 5)))
+     (Atom (fun v => v <? 5)))).
+\end{verbatim}
+\caption{Without \gls{eDSL}}
+\label{code:edsl-eg-no}
+\end{subfigure}%
+%
+\begin{subfigure}{0.5\linewidth}
+  \centering
+  % (#(fun '(r, o, a) => r && negb o)+ | e);
+  %  #(fun '(r, o, a) => r && o);       
+  %  #(fun '(r, o, a) => a)             
+\begin{verbatim}
+  let hi := fun v => 5 <=? v in
+  let low := fun v => v <? 5 in
+  <{
+    #hi*; (#hi | #low); #low
+  }>.
+\end{verbatim}
+\caption{With \gls{eDSL}}
+\label{code:edsl-eg-yes}
+\end{subfigure}
+\caption{Example of an \code{re} term}
+\label{code:edsl-eg}
+\end{figure}
+
+\section{Representing finiteness} \label{sec:repr-finset}
+The notion of finiteness is intrinsically linked to the definition of
+\glspl{NFA}.
+Moreover, as we intend to convert the \glspl{NFA} that we generate in
+Coq to hardware,
+we need to make this finiteness explicit in the Coq representation of
+\glspl{NFA}.
+% This is because we want our matchers to be made as hardware
+% implementations.
+This is because hardware resources are inherently finite.
+
+In order to build a representation of finiteness that can be used in
+our constructions of \glspl{NFA},
+% as described in
+% Section~\ref{sec:thompson-overview},
+we need reifications in Coq of the following:
+
+\begin{itemize}
+\item Finite sets
+\item Subsets of finite sets
+\item Functions from finite sets
+\end{itemize}
+
+% For a finite set $U$, subsets of $U$ can be represented as functions
+% whose domain is $U$.
+Subsets of a finite set $U$ can be represented as its characteristic
+function from $U$ to Boolean.
+%
+% Subsets of finite sets can be implemented as functions from finite types.
+% This is because the former can be represented by means of their
+% characteristic function.
+% A subset of a finite set $X$ can be indicated with a Boolean function
+% from $X$.
+In our constructions of automata, we need a few basic operations like
+union of subsets of finite sets (Table.~\ref{tab:set-coq-corr}).
+All these operations can be implemented as operations on the
+characteristic functions of finite sets.
+% We use a representation of finite sets and associated operations 
+
+
+% Similarly, operations on such subsets can be implemented in terms
+% of operations over a representation of finite sets. 
+% We need finite sets, subsets of finite sets and corresponding
+% operations to construct \glspl{NFA} corresponding to \glspl{rgx} in
+% such a way that the resultant automata can be used to generate a
+% hardware implementation of a corresponding matcher via extraction.
+
+The operations that we need are available as part of third party Coq
+libraries like the \code{finset} type of mathcomp.
+However, such types are designed primarily for carrying out proofs and
+are not suitable for use in definitions meant for conversion to
+hardware.
+
+% There are several implementations of finite set available as
+% part of third party Coq libraries.
+% But they are usually optimized for carrying out proofs and are not
+% meant for extraction.
+% An example is the \code{finset} type of the mathcomp library. This
+% type represents finite sets and has a large number of lemmas
+% and theorems associated with it already defined.
+% However, we found that this type does not extract in a way that is
+% convenient for conversion to hardware designs.
+
+For the purposes of this thesis, we represent finiteness using user
+defined types.
+These types, together with associated definitions, gives a minimal
+implementation that is sufficient for our use case.
+%
+Our design goals when
+% The following aspects need to be considered when
+choosing the way to represent finiteness in Coq are as follows:
+\begin{itemize}
+  \item
+    The representation must be in a form where it is convenient to
+    implement the operations needed to construct \glspl{NFA}.
+  \item
+    The representation must be computation-friendly and in a form
+    which can be mapped to primitive hardware operations.
+\end{itemize}
+
+\subsection{Finite sets}
+We define the type \code{sort} to reify finite sets in Coq
+(Fig.~\ref{code:coq-sort-type}).
+The constructors \code{Zero}, \code{One} and \code{Add} are
+reifications of the empty set, singleton set and the disjoint union
+operation, respectively.
+% Values \code{Zero} and \code{One} represents the empty and singleton
+% sets respectively.
+% The constructor \code{Add} denotes the disjoint union of
+% two finite sets.
+The semantics of \code{sort} is shown in
+Fig.~\ref{code:coq-sort-sem}.
+Each \code{sort} value $s$ corresponds to a finite type $⟦s⟧$ in Coq
+that represents a finite set.
+%fixed cardinality.
+% The cardinality of a \code{sort} value is the number of \code{One}
+% constructors used to build it.
+We use the notation $|s|$ to indicate the cardinality of the finite
+set represented by a \code{sort} value $s$.
+
+\begin{figure}
+\begin{subfigure}{0.5\textwidth}
+  \input{chapters/snippets/sort.tex}
+  \caption{Syntax}
+  \label{code:coq-sort-type}
+\end{subfigure}
+\begin{subfigure}{0.5\textwidth}
+  \input{chapters/snippets/sort-sem.tex}
+  \caption{Semantics}
+  \label{code:coq-sort-sem}
+\end{subfigure}
+\caption{\code{sort} type and semantics}
+\label{code:coq-sort-types}
+\end{figure}
+
+% A given \code{sort} value represents the \enquote{shape} of a finite
+% set.
+%
+A given \code{sort} value \code{s} shows how a finite set is built
+inductively by means of disjoint union operations over singleton and
+empty sets.
+% on other finite sets all the way down to the
+% singleton and empty sets.
+%
+% The \code{sort} value is indicative of the order of disjoint union
+% operations by which its constituent elements were combined together to
+% form the overall set.
+A few examples of different ways in which a finite set of cardinality
+4 may be formed is shown in Fig.~\ref{fig:sort-shape}, where each
+\blackcircle{} represents an element of the set.
+
+\subsection{Representing functions with finite domain}
+% A definition of \glspl{NFA} needs the concept of finite sets.
+% In this context, we use the term \emph{universe} to refer to the set
+% associated with a given sort.
+% We need the following constructs for defining \glspl{NFA}:
+% \begin{itemize}
+% \item Functions with a finite universe as domain.
+% \item
+%   Subsets of a finite universe, represented as Boolean functions from the
+%   finite universe.
+% \item 
+%   Ability to use functions from finite universes to build functions
+%   from bigger universes.
+% \end{itemize}
+
+\begin{figure}
+  \input{chapters/pics/sort-shapes-eg.tex}
+\caption{Few possible structures of a finite set with 4 elements}
+\label{fig:sort-shape}
+\end{figure}
+
+% Along with finite sets, we also need a representation of functions
+% from finite types within Coq.
+% This is needed to define transition relation of \glspl{NFA}.
+% % functions within Coq.
+We use a type \code{func} to represent such functions
+(Fig.~\ref{code:vec}).
+% This definition satisfies all the requirements listed above.
+Values of type \code{func T s} correspond to functions from a finite
+type $⟦s⟧$ to a type $T$, where $s$ is a \code{sort} value.
+For better readability, we use the notation $s \vto T$ to indicate
+the type \code{func T s}.
+%
+This notation resembles that of the function type and is chosen since
+\code{func T s} values are essentially a computation-friendly form of
+functions from finite types.
+%
+% The constructors \code{Zero}, \code{One} and \code{Add} indicate the
+% empty function, constant function and the union of two functions,
+% respectively.
+
+\begin{figure}
+\begin{subfigure}{0.5\textwidth}
+  \input{chapters/snippets/vec.tex}
+  \caption{Syntax}
+  \label{code:vec-syntax}
+\end{subfigure}
+\begin{subfigure}{0.5\textwidth}
+  \input{chapters/snippets/vec-sem.tex}
+  \caption{Semantics}
+  \label{code:vec-sem}
+\end{subfigure}
+\caption{Vector type used to represent functions from finite sets}
+\label{code:vec}
+\end{figure}
+
+Having obtained a way to represent functions from finite sets,
+% by means of the \code{func} type,
+we can use it to represent subsets of finite sets via their
+characteristic functions.
+% Finite sets can be represented by means of their characteristic
+% function.
+%
+Let \code{s} be a value of type \code{sort}.
+Given a subset $A$ of $⟦s⟧$, the characteristic function $\chi_A$
+associated with $A$ is a Boolean function $\chi_A(x)$ that is true
+if and only if $x ∈ A$.
+%
+% The characteristic function of a finite set is a Boolean function
+% which tests whether a given element is part of that set or not.
+% For example, let \code{s} be a \code{sort} value representing a finite
+% set $⟦s⟧$.
+% Subsets of the set $⟦s⟧$ can be represented by a function of type $⟦s⟧
+% \to \mathbb{B}$.
+Since $s \vto \mathbb{B}$ are representations of functions from $⟦s⟧$,
+it can double up as the type of characteristic functions of subsets of
+$⟦s⟧$.
+% Thus, $s \vto \mathbb{B}$ values are a viable means to represent
+% subsets of the finite set $⟦s⟧$.
+%
+% %% This means that a finite set $X$ consisting of elements with type $T$
+% %% can be represented by means of a function of type $T \to \mathbb{B}$.
+% %% Since $T$ is a finite type, this function can be represented as a
+% %% value of type $s \vto \mathbb{B}$, where \code{s} is a \code{sort}
+% %% value such that $|s| = |T|$.
+% This means that a subset of a finite set $T$ can be represented by means of a
+% function having type $T \to \mathbb{B}$.
+% % This means that a finite set $X$ consisting of elements with type $T$
+% % can be represented by means of a function having type $T \to \mathbb{B}$.
+% %
+% Since the set $T$ corresponds to a finite type $s$, this function can be
+% represented as a value of type $s \vto \mathbb{B}$, where \code{s} is a
+% \code{sort} value such that $|s| = |T|$.
+% % Therefore, we can represent finite sets and operations on finite sets
+% % using \code{func} values and functions over the \code{func} type.
+% Therefore, we can represent finite sets using \code{func} values and
+% operations on finite sets with functions over the \code{func} type.
+% %% A relation $R \subseteq X \times Y$ where $X$ and $Y$ are finite
+% %% types, can be represented as a $X \vto Y \vto \mathbb{B}$ value.
+% %% Likewise, a predicate on a finite set $X$ corresponds to a value of
+% %% type $X \vto \mathbb{B}$.
+%
+% A predicate on a finite set $X$ corresponds to a value of type $⟦s_X⟧ \vto
+% \mathbb{B}$ where $s_X$ is a \code{sort} value corresponding to the
+% finite set $X$.
+Likewise, a relation on the finite sets $⟦X⟧$ and $⟦Y⟧$, where $X$ and
+$Y$ are \code{sort} values, can be represented as $X \vto Y \vto
+\mathbb{B}$ value.
+% \subseteq X \times Y$ where $X$ and $Y$ are
+% finite sets, can be represented as a $⟦s_X⟧ \vto ⟦s_Y⟧ \vto
+% \mathbb{B}$ value.
+We use this to represent transition function of the \glspl{NFA} that
+we build (Section~\ref{sec:repr-nfa}).
+
+We aim to construct \gls{NFA} corresponding to a given \gls{rgx} using
+Thompson construction.
+This construction needs certain set operations like union and intersection.
+We define these operations as functions on $s \vto \mathbb{B}$ where
+$s$ is a \code{sort} (Fig.~\ref{code:vec-ops}).
+% % In order to do this in terms of 
+% % In order to build an \gls{NFA} corresponding to a given \gls{rgx}
+% % using Thompson construction in terms of \code{func},
+% we need appropriate \code{func} functions corresponding to operations
+% on finite sets, like union and intersection.
+% % The \code{func} version of the empty set and the singleton set are
+% % defined as the functions \code{empty} (Fig.~\ref{code:empty}) and
+% % \code{singleton} (Fig.~\ref{code:singleton}) respectively.
+% % We define the functions \code{union} and \code{intersection} to
+% % represent set union and intersection respectively
+% % (Fig.~\ref{code:union-intersect}).
+Higher order functions like \code{zipWith}(Fig.~\ref{code:zipwith}) and
+\code{fold} (Fig. ~\ref{code:fold}) play an important rule in defining
+these operations.
+% We define these operations in terms o
+% These two functions are defined using a helper function named
+% \code{zipWith} (Fig.~\ref{code:zipwith}).
+% Similarly, the 'big union' operation is implemented as the function
+% \code{bigUnion} (Fig.~\ref{code:bigUnion}) which is defined using a
+% \code{fold} function (Fig. ~\ref{code:fold}).
+% The operation $\bigcup\limits_{x \in X}^{} f x$ corresponds to
+% \code{bigUnion X f}.
+A summary of these functions and their corresponding set operations is
+given in Table~\ref{tab:set-coq-corr}.
+
+\begin{table}
+  \centering
+\begin{tabular}{ll}
+  \toprule
+  Coq                     & Sets                                \\
+  \midrule
+  \code{empty}            & $\{\}$                              \\
+  \code{singleton x}      & $\{x\}$                             \\
+  \code{intersection A B} & $A \cap B$                          \\
+  \code{union A B}        & $A \cup B$                          \\
+  \code{bigUnion X f}     & $\bigcup\limits_{x \in X}^{}\ f\ x$ \\
+  \bottomrule
+\end{tabular}
+\caption{Coq functions and corresponding set operations}
+\label{tab:set-coq-corr}
+\end{table}
+
+\input{chapters/pics/setops-defns.tex}
+
+\section{Representing NFAs} \label{sec:repr-nfa}
+We represent \glspl{NFA} in Coq using the record type
+\code{nfa} (Fig.~\ref{code:nfa}).
+A value of type \code{nfa A Q} denotes an \gls{NFA} whose states are
+elements of $⟦Q⟧$ and alphabet type is $⟦A⟧$.
+The fields \code{start} and \code{final} are subsets of $⟦Q⟧$
+representing the set of start and final states respectively.
+%
+Transition information is maintained as a value \code{trans} of type
+$A \vto Q \vto Q \vto \mathbb{B}$ which corresponds to a finite
+function of type $⟦A⟧ \to ⟦Q⟧ \to ⟦Q⟧ \to \mathbb{B}$.
+
+We run the \glspl{NFA} by simulating its execution as described in
+Section~\ref{sec:nfa-sim-overview}.
+Each simulation step consists of considering the elements present in the set
+of currently active states with respect to an input symbol and finding
+the next set of states as 
+illustrated in Fig.~\ref{fig:nfa-next-state-type}.
+% A value \code{cur} of type $Q \vto \mathbb{B}$ represents the set of
+% currently active states of the \gls{NFA} being simulated.
+% The transition function $\delta$ is applied to the input symbol
+% \code{a} to obtain the set of transitions from a given state.
+% The next set of states with respect to each \gls{NFA} state in
+% \code{cur} is then calculated and their union is produced by using the
+% \code{bigUnion} function.
+
+\begin{figure}
+  \hfill%
+  \begin{minipage}{0.7\textwidth}
+  \input{chapters/snippets/nfa.tex}
+  \end{minipage}%
+  \hfill
+\caption{NFA type in Coq}
+\label{code:nfa}
+\end{figure}
+
+\begin{figure}
+\begin{mathpar}
+\begin{array}{rcl}
+       a & : & A \\
+     cur & : & Q \vto \mathbb{B} \\
+  \delta & : & A \vto Q \vto Q \vto \mathbb{B} \\
+bigUnion & : & (s_1 \vto bool) \to
+               (s_1 \vto s_2 \vto bool) \to
+               (s_2 \vto \mathbb{B}) \\
+\hline
+  bigUnion\; cur\ (\delta\ a) & : & Q \vto \mathbb{B} \\
+\end{array}
+\end{mathpar}
+\caption{Finding next state of an NFA}
+\label{fig:nfa-next-state-type}
+\end{figure}
+
+% Though \gls{NFA} simulation gives us a way to run the matcher, there
+% is still a problem which we describe in the next section.
+
+\section{Decoupling tests from simulation} \label{sec:c3-ft}
+Notice that the alphabet of an \gls{NFA} as described with an
+\code{nfa A Q} value is a finite type $⟦A⟧$ rather than the alphabet type
+$\Sigma$ of the input words.
+This is to facilitate the conversion of the \glspl{NFA} made within Coq
+to a form which can be used to produce a corresponding hardware.
+% We need to be able to extract the \gls{NFA} data from Coq in a way
+% that can be used to build hardware. 
+
+The atoms of the input \glspl{rgx} to our workflow are Boolean tests.
+It is possible build corresponding \glspl{NFA} whose transition functions
+are defined directly in terms of these tests.
+Though such \glspl{NFA} can be extracted out from Coq and be used by
+software applications, they are not suitable for conversion to
+hardware.
+% The input \gls{rgx} consists of atoms over the type \code{Σ → \bbool}.
+% Though the components of a corresponding \gls{NFA} of type
+% \code{nfa (Σ → \bbool) Q} can be extracted in a way that may be used
+% for software, it is not suitable for hardware designs.
+%
+% The difficulty arises is due to the presence of functions in the
+% transition function.
+% of the \gls{NFA}, which makes it difficult to
+% convert the automata to a corresponding hardware design.
+%
+However, the transition function of \glspl{NFA} represented using
+values of the \code{nfa} type can be seen as tables of Boolean values.
+It is straightforward to convert such a representation to hardware.
+We now show how the input \gls{rgx} can be converted to a
+corresponding \code{nfa} value.
+
+% On the other hand, \gls{NFA} can be implemented as tables of Boolean
+% values.
+% Values of the \code{nfa A Q} type can be used to express \gls{NFA}
+% information in such a form.
+% For conversion to hardware, we want \glspl{NFA} to be in this form.
+
+Consider a value \code{r} of type \code{re (Σ → \bbool)} which denotes
+a regular expression.
+Let $F$ be the set of tests associated with the atoms of the input
+\gls{rgx} \code{r}.
+Since $F$ is a finite set, its elements
+can be mapped to values of a finite type $⟦A⟧$ where \code{A} is a
+\code{sort} value.
+% The number of atoms in \code{r} is a finite number and hence the tests
+% associated with them can be represented as a finite set $⟦A⟧$ where
+% $A$ is a \code{sort} value.  
+%
+Thus, we can use the input \gls{rgx} \code{r} to create a pair
+\code{(rA, ft)} where \code{rA} is of type \code{re A} and \code{ft}
+is a value of type $A \vto (\Sigma \to \mathbb{B})$ mapping elements
+of $⟦A⟧$ back to the values in $F$
+(Fig.~\ref{fig:re-ft-nfa-run-overview}).
+%
+For any \code{rA} and associated \code{ft}, the input \gls{rgx}
+\code{r} may be recovered by a simple map operation.
+Thus, given an \code{re (Σ → \bbool)} value, we can produce a
+corresponding \gls{rgx} whose alphabet is a finite type.
+% This \gls{rgx} may then be converted to an \code{nfa} value whose
+% alphabet is represented by a \code{sort} value as shown in
+% Fig.~\ref{fig:re-ft-nfa-run-overview}.
+% By using $ft$, we are able to decouple the input \gls{rgx} from the
+% tests present in it.
+% This allows us to create \glspl{NFA} as values of the type \code{nfa A
+% Q}.
+
+% The input \gls{rgx} is a value of type \code{re (Σ → \bbool)}. 
+% However, as the number of tests in a given regular expression $r$ is a
+% known finite number, we can think of $r$ as a pair $(rA, ft)$ where
+% $rA$ is a \code{re A} value and $ft$ is a $A \vto (\Sigma \to bool)$
+% value (Fig.~\ref{fig:re-ft-nfa-run-overview}).
+%
+The \code{rA} value can be converted to a value of type \code{nfa A Q}
+and eventually be converted to hardware % as shown in
+Fig.~\ref{fig:delta-ft-yes-no} (See Section~\ref{sec:ft-clash}).
+%
+Such an \gls{NFA} is simulated with the help of \code{ft}.
+Each simulation step involves calculating the next set of states of
+the \gls{NFA} as
+illustrated in Fig.~\ref{fig:re-ft-nfa-run-detail}.
+The operations needed for this simulation (eg: \code{bigUnion}) are
+already made available in terms of \code{func}.
+%
+% The manner in which Coq terms are reduced means that the computation
+% to calculate the next state of the \gls{NFA} would essentially be a
+% function depending on future inputs rather than being a concrete,
+% fully reduced \code{func} value.
+% This computation stops at the point where a future input symbol is
+% required. A representation of this scenario is shown in
+% Fig.~\ref{fig:delta-no-ft}.
+% In our experience, the Clash compiler cannot use such a transition
+% function to produce corresponding Verilog.
+% This is because Clash expects
+% the \gls{NFA} state should be a value that can be stored in a
+% register.
+% Functions correspond to an entire circuit in Clash and hence cannot be
+% stored in a register.
+% % which is not suited to store functions.
+% % This is because functions correspond to an entire circuit instead of
+% % specific values.
+% %
+% We avoid this problem by decoupling the tests from the \gls{NFA}.
+Thus through the use of \code{ft}, we are able decouple the transition
+function of \glspl{NFA} from tests.
+This allows us to produce matchers which can be converted to
+synthesizable hardware designs.
+
+\begin{figure}
+  \centering
+  \begin{subfigure}{0.5\linewidth}
+  \centering
+  \input{chapters/snippets/ft-without.tex}
+\caption{Without $ft$}
+\label{fig:delta-no-ft}
+\end{subfigure}%
+%
+\begin{subfigure}{0.4\linewidth}
+  \centering
+  \input{chapters/snippets/ft-with.tex}
+\caption{With $ft$}
+\label{fig:delta-yes-ft}
+\end{subfigure}
+\caption{Representations of $\delta$ with and without $ft$}
+\label{fig:delta-ft-yes-no}
+\end{figure}
+
+% Let $F$ be the set of tests associated with the atoms of the input
+% \gls{rgx} \code{r}.
+% Since $F$ is a finite set, its elements
+% can be mapped to values of a finite type $⟦A⟧$ where \code{A} is a
+% \code{sort} value.
+% Thus, we can use the input \gls{rgx} $r$ to create a pair $(rA, ft)$
+% where 
+% % to produce a \gls{rgx}
+% \code{rA} is of type \code{re A} and $ft$ is a \code{func} value
+% mapping elements of $⟦s⟧$ back to the values in $F$. 
+% We term the mapping $ft$ as the 
+% % We save this bijective mapping as a \code{func} value with type
+% % $A \vto (\Sigma \to \mathbb{B})$ that we term \emph{function table}
+% % ($ft$).
+% \emph{function table}.
+% %% The input \gls{rgx} \code{r} may be recovered from a \code{rA} via a
+% %% map operation 
+% For any \code{rA} and associated $ft$, the input \gls{rgx} \code{r}
+% may be recovered by a simple map operation.
+% Thus, given an \code{re (Σ → \bbool)} value, we can produce a
+% corresponding \gls{rgx} whose alphabet is a finite type.
+% This \gls{rgx} may then be converted to an \code{nfa} value whose
+% alphabet is represented by a \code{sort} value as shown in
+% Fig.~\ref{fig:re-ft-nfa-run-overview}.
+% By using $ft$, we are able to decouple the input \gls{rgx} from the
+% tests present in it.
+% This allows us to create \glspl{NFA} as values of the type \code{nfa A
+% Q}.
+
+\begin{figure}
+  \centering
+  \input{chapters/pics/re-ft-nfa-run-overview.tex}
+  \caption{Creation of \code{nfa} value from $re\ (\Sigma \to \mathbb{B})$}
+  \label{fig:re-ft-nfa-run-overview}
+\end{figure}
+
+% % TODO: Semantics of rA and r is same.
+% We run resultant \code{nfa} by making use of $ft$.
+% The subset of tests from the input \gls{rgx} that return true for
+% the current input symbol $\sigma$ is obtained using the function
+% table.
+% Afterwards, we use the appropriate \code{func} operations to produce
+% the next set of active states as shown in
+% Fig.~\ref{fig:re-ft-nfa-run-detail}.
+% Instead of using the tests from $F$ directly, the function table $ft$
+% is used by the \gls{NFA} to process input as it runs.
+
+\begin{figure}
+  \centering
+  \input{chapters/pics/re-ft-nfa-run-detail.tex}
+  \caption{Running \code{nfa} using $ft$}
+  \label{fig:re-ft-nfa-run-detail}
+\end{figure}
+
+\section{NFA construction using set operations} \label{sec:nfacon-set}
+We use Thompson's algorithm for constructing an \gls{NFA}
+corresponding to the input \gls{rgx}.
+Section~\ref{sec:thompson-overview} gave a brief description of this
+algorithm.
+This section shows how the \glspl{NFA} as defined in
+Definition~\ref{def:nfa-set} can be constructed using Thompson's
+algorithm using sets and set operations.
+The \code{nfa} values corresponding to the operations described below
+are shown in Fig.~\ref{fig:nfacon-nfa-vals}.
+
+\begin{figure}
+  \centering
+  \input{chapters/pics/fa-con-base.tex}
+  \caption{NFA for base regex}
+  \label{fa:con-base}
+\end{figure}
+
+% \begin{figure}
+%   \centering
+%   \input{chapters/pics/fa-con-cat.tex}
+%   \caption{NFA for \code{Cat}}
+%   \label{fa:con-cat}
+% \end{figure}
+
+\begin{figure}
+  \centering
+  \input{chapters/pics/fa-con-alt.tex}
+  \caption{NFA for \code{Alt}}
+  \label{fa:con-alt}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \input{chapters/pics/fa-con-plus.tex}
+  \caption{NFA for \code{Plus}}
+  \label{fa:con-plus}
+\end{figure}
+
+% \begin{definition}
+% \label{def:nfa-set-nul}
+% An \gls{NFA} $N = (Q, \Sigma, \delta, I, F)$ corresponding to the
+% \gls{rgx} $\emptyset$ may be defined as follows:
+
+% \begin{mathpar}
+% Q = \emptyset \and
+% I = \emptyset \and
+% F = \emptyset \and
+% \delta(q, \varepsilon) = \emptyset \and
+% \delta(q, \sigma) = \emptyset
+% \end{mathpar}
+% \end{definition}
+
+\begin{definition}
+\label{def:nfa-set-eps}
+An \gls{NFA} $N = (Q, \Sigma, \delta, I, F)$ corresponding to the
+\gls{rgx} $\varepsilon$ may be defined as follows:
+
+\begin{mathpar}
+Q = \{init\} \and
+I = \{init\} \and
+F = \{init\} \and
+\delta(q, \varepsilon) = \emptyset \and
+\delta(q, \sigma) = \emptyset
+\end{mathpar}
+\end{definition}
+
+\begin{definition}
+\label{def:nfa-set-atom}
+An \gls{NFA} $N = (Q, \Sigma, \delta, I, F)$ corresponding to the
+\gls{rgx} $c$ may be defined as follows:
+
+\begin{mathpar}
+Q = \{init, end\} \and
+I = \{init\} \and
+F = \{end\} \\
+%
+\delta(q, \varepsilon) = \emptyset \and
+%
+\delta(q, \sigma) = 
+  \left\{
+    \begin{aligned}
+      & \{end\}\ if\ \sigma = c\ and\ q = init\\
+      & \emptyset\ otherwise \\
+    \end{aligned}
+  \right.
+\end{mathpar}
+\end{definition}
+
+\begin{definition}
+\label{def:nfa-set-cat}
+An \gls{NFA} $N = (Q, \Sigma, \delta, I, F)$ formed as a result of
+concatenating two \glspl{NFA} $N_1 = (Q_1, \Sigma, \delta_1, I_1,
+F_1)$ and $N_2 = (Q_2, \Sigma, \delta_2, I_2, F_2)$ can be defined
+as follows:
+
+\begin{mathpar}
+Q = Q_1 \cup Q_2 \and
+I = I_1 \and
+F = F_2 \\
+%
+\delta(q, \sigma) = 
+  \left\{
+    \begin{aligned}
+      & \delta_1(q, \sigma)\ if\ q \in Q_1 \\
+      & \delta_2(q, \sigma)\ if\ q \in Q_2 \\
+    \end{aligned}
+  \right.\and
+%
+\delta(q, \varepsilon) = 
+  \left\{
+    \begin{aligned}
+      & \delta_1(q, \varepsilon)\ \cup I_2\ if\ q \in Q_1\ and\ q \in F_1 \\
+      & \delta_2(q, \varepsilon)\ if\ q \in Q_1\ and\ q \notin F_1 \\
+      & \delta_2(q, \varepsilon)\ if\ q \in Q_2 \\
+    \end{aligned}
+  \right. \\
+\end{mathpar}
+\end{definition}
+
+
+\begin{definition}
+\label{def:nfa-set-alt}
+An \gls{NFA} $N = (Q, \Sigma, \delta, I, F)$ formed as a result of a
+choice between two \glspl{NFA} $N_1 = (Q_1, \Sigma, \delta_1, I_1,
+F_1)$ and $N_2 = (Q_2, \Sigma, \delta_2, I_2, F_2)$ can be defined
+as follows:
+
+\begin{mathpar}
+Q = Q_1 \cup Q_2 \and
+I = I_1 \cup I_2 \and
+F = F_1 \cup F_2 \and
+\delta(q, \sigma) = 
+  \left\{
+    \begin{aligned}
+      & \delta_1(q, \sigma)\ if\ q \in Q_1 \\
+      & \delta_2(q, \sigma)\ if\ q \in Q_2 \\
+    \end{aligned}
+  \right.
+\end{mathpar}
+\end{definition}
+
+% \begin{definition}
+% \label{def:nfa-set-star}
+% An \gls{NFA} $N = (Q, \Sigma, \delta, I, F)$ corresponding to a
+% \gls{rgx} $r$, the \gls{NFA} for $r^*$ may be defined as  
+% $N_* = (Q_*, \Sigma, \delta_*, Q_{0^*}, F_*)$ as follows:
+
+% \begin{mathpar}
+% Q = \{init\} \cup Q \and
+% I = \{init\} \and
+% F = \{init\} \\
+% %
+% \delta(q, \sigma) = \delta_*(q, \sigma) \and
+% %
+% \delta(q, \varepsilon) = 
+%   \left\{
+%     \begin{aligned}
+%       & \{init\}\ if\ q \in F \\
+%       & I\ if\ q = init \\
+%     \end{aligned}
+%   \right. \\
+% \end{mathpar}
+% \end{definition}
+
+\begin{definition}
+\label{def:nfa-set-plus}
+Given an \gls{NFA} $N_r = (Q_r, \Sigma, \delta_r, I_r, F_r)$
+corresponding to a \gls{rgx} $r$,
+the \gls{NFA} for $r^+$ may be defined as  
+$N = (Q, \Sigma, \delta, I, F)$ as follows:
+
+\begin{mathpar}
+Q = Q_r \and
+I = I_r \and
+F = F_r \\
+%
+\delta(q, \sigma) = \delta_r(q, \sigma) \and
+%
+\delta(q, \varepsilon) = 
+  \left\{
+    \begin{aligned}
+      & \delta_r(q, \varepsilon) \cup I_r\ if\ q \in F_r \\
+      & \delta_r(q, \varepsilon)\ otherwise \\
+    \end{aligned}
+  \right. \\
+\end{mathpar}
+\end{definition}
+
+
+\begin{definition}
+\label{def:nfa-set-run}
+Given an \gls{NFA} $N = (Q, \Sigma, \delta, I, F)$ whose current
+state is $cur \in P(Q)$, the next state is $nxt(cur)$ defined as shown
+below. A state $cur$ is a final state if $isfinal(cur)$ is true.
+
+\begin{mathpar}
+nxt(cur)\ = \bigcup\limits_{s\ \in\ cur}^{} \delta(s, \sigma) \and
+isfinal(cur)\ = cur \cap F \neq \emptyset
+\end{mathpar}
+\end{definition}
+
+\input{chapters/pics/nfacon-records.tex}

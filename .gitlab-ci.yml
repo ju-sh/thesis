@@ -1,0 +1,22 @@
+# https://stackoverflow.com/questions/73745571/compiling-latex-files-automatically-with-gitlab-ci-with-images
+#
+build:
+  image: ctornau/latex
+  stage: build
+  artifacts:
+    paths:
+      - classicthesis.pdf
+  script:
+    - apt-get -y update
+    - apt-get -y install fonts-symbola
+#   - apt-get -y install python3-pygments
+#
+    - xelatex --shell-escape classicthesis.tex
+    - makeglossaries classicthesis
+    - makeindex classicthesis.nlo -s nomencl.ist -o classicthesis.nls
+    - biber classicthesis
+    - xelatex --shell-escape classicthesis.tex
+    - xelatex --shell-escape classicthesis.tex
+#
+#   - latexmk -xelatex -shell-escape classicthesis.tex
+#   - latexmk -xelatex classicthesis.tex
