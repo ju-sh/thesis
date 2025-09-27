@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "Please cite document made from this repo as below."
+authors:
+- family-names: "Shaji"
+  given-names: "Julin"
+  orcid: "https://orcid.org/0000-0002-9768-3607"
+title: "Towards verified regular expression matchers in hardware"
+version: May 2025
+doi: 10.5281/zenodo.17212579
+date-released: 2025-05-31
+url: "https://github.com/ju-sh/thesis/"
