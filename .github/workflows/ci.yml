@@ -25,6 +25,7 @@ jobs:
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@v4
         with:
+          os: debian
           root_file: thesis.tex
           latexmk_shell_escape: true
           latexmk_use_xelatex: true
@@ -37,6 +38,8 @@ jobs:
           path: thesis.pdf
 
   deploy:
+    permissions:
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
